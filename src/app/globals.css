@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+/* The palette. Plain custom properties, so the dark override below is an
+   ordinary media query - Tailwind cannot process @theme inside one. */
+:root {
+  --bg: #fafaf9;
+  --surface: #ffffff;
+  --border: #e7e5e4;
+  --ink: #1c1917;
+  --muted: #78716c;
+  --accent: #0f766e;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1917;
+    --surface: #262322;
+    --border: #3a3532;
+    --ink: #f5f5f4;
+    --muted: #a8a29e;
+    --accent: #2dd4bf;
+  }
+}
+
+/* Map them into Tailwind, which generates bg-bg, text-ink, border-border,
+   bg-accent and so on. They point at the variables above, so the utilities
+   follow the light/dark switch on their own. */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}

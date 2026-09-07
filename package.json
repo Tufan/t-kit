@@ -1,0 +1,36 @@
+{
+  "name": "t-kit",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "seed": "node --env-file=.env.local scripts/seed.mjs",
+    "examples:remove": "node scripts/remove-examples.mjs"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "1.1.0",
+    "better-auth": "1.7.2",
+    "drizzle-orm": "0.45.2",
+    "next": "16.3.4",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "26.4.1",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.5",
+    "drizzle-kit": "0.31.10",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}
