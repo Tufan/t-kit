@@ -9,11 +9,16 @@ empty folder.
 
 ## Before you start
 
-Work through the pre-session checklist first: accounts to create and things to
-install. About 20 minutes. You need Node.js 20 or newer.
+Work through the pre-session checklist first: accounts to create and, if you
+are working locally, things to install.
 
+- **Browser only, nothing to install** (works on a locked-down or old
+  machine): [docs/before-your-session-browser.md](docs/before-your-session-browser.md)
 - Windows: [docs/before-your-session.md](docs/before-your-session.md)
 - Mac: [docs/before-your-session-mac.md](docs/before-your-session-mac.md)
+
+Working locally needs Node.js 20 or newer. The browser route does not: the
+machine it runs on already has everything.
 
 ## Getting started
 

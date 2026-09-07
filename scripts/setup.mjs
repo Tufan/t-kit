@@ -119,16 +119,17 @@ if (!hasVercel) {
 let who = tryRun('npx vercel whoami')
 if (!who) {
   say()
-  info('You need to sign in to Vercel. A browser window will open.')
-  info('Sign in with GitHub, then come back here.')
+  info('You need to sign in to Vercel.')
+  info('A link and a short code will appear below. Open the link, check the')
+  info('code matches, approve it, then come back here.')
   say()
   try {
     run('npx', ['vercel', 'login'])
   } catch {
     stop(
       "Vercel sign-in didn't complete",
-      'The browser step may have been cancelled or timed out.',
-      'Run `npm run setup` again and complete the sign-in in the browser.'
+      'The code may have expired, or the approval was cancelled.',
+      'Run `npm run setup` again and approve the link when it appears.'
     )
   }
   who = tryRun('npx vercel whoami')
@@ -187,7 +188,10 @@ if (envHas('DATABASE_URL')) {
   info('Provisioning a free Neon Postgres database...')
   info('This creates it, connects it to your project, and saves the details.')
   try {
-    run('npx', ['vercel', 'install', 'neon', '--name', `${projectName}-db`])
+    // The flags skip the plan/region/auth prompts. `auth=false` matters:
+    // Neon Auth is on by default and would sit alongside Better Auth.
+    run('npx', ['vercel', 'install', 'neon', '--name', `${projectName}-db`,
+                '--plan', 'free_v3', '-m', 'region=lhr1', '-m', 'auth=false'])
   } catch {
     stop(
       "Couldn't create the database",
