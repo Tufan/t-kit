@@ -246,7 +246,9 @@ ok('Settings saved')
 step(6, TOTAL, 'Creating your tables')
 
 try {
-  run('npx', ['drizzle-kit', 'push', '--force'])
+  // drizzle-kit does not read .env.local on its own, so load it here.
+  run('node', ['--env-file=.env.local',
+               'node_modules/drizzle-kit/bin.cjs', 'push', '--force'])
 } catch {
   stop(
     "Couldn't create the database tables",

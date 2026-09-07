@@ -10,7 +10,12 @@
       "extensions": [
         "anthropic.claude-code",
         "bradlc.vscode-tailwindcss"
-      ]
+      ],
+      "settings": {
+        "workbench.startupEditor": "readme",
+        "git.openRepositoryInParentFolders": "never",
+        "chat.commandCenter.enabled": false
+      }
     }
   },
   "postCreateCommand": "npm install",
