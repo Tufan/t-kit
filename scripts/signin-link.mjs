@@ -13,6 +13,7 @@
 
 import { neon } from '@neondatabase/serverless'
 import { existsSync, readFileSync } from 'node:fs'
+import { spawnSync } from 'node:child_process'
 
 if (!process.env.DATABASE_URL) {
   console.error('\n  DATABASE_URL is missing. Run: npx vercel env pull .env.local\n')
@@ -21,6 +22,18 @@ if (!process.env.DATABASE_URL) {
 
 const sql = neon(process.env.DATABASE_URL)
 
+const DEV_PORT = Number(process.env.PORT) || 3000
+
+/** True if `npm run dev` is up, so we should point at the local copy. */
+function devServerRunning() {
+  const r = spawnSync(process.execPath, [
+    '-e',
+    `require('net').connect(${DEV_PORT},'127.0.0.1')` +
+      `.on('connect',()=>process.exit(0)).on('error',()=>process.exit(1))`,
+  ])
+  return r.status === 0
+}
+
 /**
  * Where the app lives. Prefer an explicit setting, then Vercel's own, then
  * the project name from `.vercel/project.json` - which gives the short public
@@ -28,6 +41,18 @@ const sql = neon(process.env.DATABASE_URL)
  */
 function siteUrl() {
   if (process.env.BETTER_AUTH_URL) return process.env.BETTER_AUTH_URL
+
+  // If a dev server is answering, you are working locally and want to see your
+  // own changes - not the live site, which does not have them yet.
+  if (devServerRunning()) {
+    if (process.env.CODESPACE_NAME) {
+      const domain =
+        process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN ?? 'app.github.dev'
+      return `https://${process.env.CODESPACE_NAME}-${DEV_PORT}.${domain}`
+    }
+    return `http://localhost:${DEV_PORT}`
+  }
+
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
     return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
   }
@@ -80,7 +105,9 @@ const minsLeft = expiresAt
   : null
 
 console.log(`\n  Sign-in link${email ? ` for ${email}` : ''}:\n`)
-console.log(`  ${site}/api/auth/magic-link/verify?token=${token}\n`)
+console.log(
+  `  ${site}/api/auth/magic-link/verify?token=${token}&callbackURL=%2F\n`
+)
 if (minsLeft !== null) {
   console.log(`  Valid for about ${minsLeft} more minute${minsLeft === 1 ? '' : 's'}.\n`)
 }

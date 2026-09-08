@@ -86,6 +86,43 @@ one in the browser and run it again.
 
 ---
 
+## `npm run dev` says localhost:3000 but nothing loads there
+
+You are working in a Codespace, so the app is not running on your own
+computer. `localhost` means "this machine", and this machine is in the cloud.
+
+Open the **PORTS** tab next to the terminal, find port 3000, and click the
+globe icon. That opens the right address, which looks like
+`https://something-3000.app.github.dev`.
+
+---
+
+## The terminal has stopped responding after `npm run dev`
+
+It has not stopped: `npm run dev` is meant to keep running. It sits there
+watching your files and rebuilding as you change them, which is why it never
+returns to a prompt.
+
+Leave it running and open a second terminal for anything else, with the **+**
+at the top right of the terminal panel. Pressing Ctrl+C stops the dev server
+and your preview goes down with it.
+
+---
+
+## "Need to specify how to reconcile divergent branches"
+
+Your copy and the online copy have both changed, and git wants to know which
+to keep. This one is safe to answer:
+
+```bash
+git pull --no-rebase
+```
+
+That merges the two. If it then reports a conflict, ask your AI assistant to
+sort it out rather than editing the files by hand.
+
+---
+
 ## "Port 3000 is already in use"
 
 You've got the app running in another window. Either use that one, or close it
