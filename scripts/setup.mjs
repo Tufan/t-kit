@@ -37,10 +37,20 @@ function stop(what, why, fix) {
 
 // ---------------------------------------------------------------- shell
 
-/** Run a command, capture output. Returns null instead of throwing. */
-function tryRun(cmd) {
+/**
+ * Run a command, capture output. Returns null instead of throwing.
+ *
+ * stdin is /dev/null and there is a timeout, because a captured command that
+ * decides to prompt would otherwise wait forever on input that can never
+ * arrive, with its prompt buried in a pipe nobody is reading.
+ */
+function tryRun(cmd, timeout = 20000) {
   try {
-    return execSync(cmd, { stdio: ['ignore', 'pipe', 'pipe'], encoding: 'utf8' }).trim()
+    return execSync(cmd, {
+      stdio: ['ignore', 'pipe', 'pipe'],
+      encoding: 'utf8',
+      timeout,
+    }).trim()
   } catch {
     return null
   }
@@ -116,30 +126,33 @@ if (!hasVercel) {
   }
 }
 
-let who = tryRun('npx vercel whoami')
+// Always run `vercel login` where you can see it. It returns straight away if
+// you are already signed in, and if you are not it prints a link and a code.
+// Do not try to detect the signed-in state first: the check itself starts a
+// login, and with its output captured the link is invisible and the script
+// looks frozen.
+say()
+info('Checking your Vercel sign-in. If a link and a short code appear below,')
+info('open the link, check the code matches, and approve it.')
+say()
+
+try {
+  run('npx', ['vercel', 'login'])
+} catch {
+  stop(
+    "Vercel sign-in didn't complete",
+    'The code may have expired, or the approval was cancelled.',
+    'Run `npm run setup` again and approve the link when it appears.'
+  )
+}
+
+const who = tryRun('npx vercel whoami')
 if (!who) {
-  say()
-  info('You need to sign in to Vercel.')
-  info('A link and a short code will appear below. Open the link, check the')
-  info('code matches, approve it, then come back here.')
-  say()
-  try {
-    run('npx', ['vercel', 'login'])
-  } catch {
-    stop(
-      "Vercel sign-in didn't complete",
-      'The code may have expired, or the approval was cancelled.',
-      'Run `npm run setup` again and approve the link when it appears.'
-    )
-  }
-  who = tryRun('npx vercel whoami')
-  if (!who) {
-    stop(
-      "Still not signed in to Vercel",
-      null,
-      'Try `npx vercel login` on its own, then run `npm run setup` again.'
-    )
-  }
+  stop(
+    'Still not signed in to Vercel',
+    null,
+    'Try `npx vercel login` on its own, then run `npm run setup` again.'
+  )
 }
 ok(`Signed in to Vercel as ${who}`)
 
