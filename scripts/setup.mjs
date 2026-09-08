@@ -56,6 +56,20 @@ function tryRun(cmd, timeout = 20000) {
   }
 }
 
+/**
+ * Run a command the user can see, but answer any prompt it raises with
+ * `answer`. Output still goes to the screen; only stdin is supplied.
+ */
+function runAnswering(cmd, args, answer, extraEnv = {}) {
+  const r = spawnSync(cmd, args, {
+    input: answer,
+    stdio: ['pipe', 'inherit', 'inherit'],
+    shell: process.platform === 'win32',
+    env: { ...process.env, ...extraEnv },
+  })
+  if (r.status !== 0) throw new Error(`${cmd} ${args.join(' ')} exited ${r.status}`)
+}
+
 /** Run a command with the user watching. Throws on failure. */
 function run(cmd, args, extraEnv = {}) {
   const r = spawnSync(cmd, args, {
@@ -137,7 +151,10 @@ info('open the link, check the code matches, and approve it.')
 say()
 
 try {
-  run('npx', ['vercel', 'login'])
+  // After signing in, the CLI offers to install a Vercel plugin into your
+  // coding agent. It defaults to yes. Decline it: nothing here needs it, and
+  // it is not a decision to make by accident on your first command.
+  runAnswering('npx', ['vercel', 'login'], 'n\n')
 } catch {
   stop(
     "Vercel sign-in didn't complete",
