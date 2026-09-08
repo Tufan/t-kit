@@ -10,38 +10,38 @@ empty folder.
 
 ## Picking this back up
 
-Been away for a while? Start here.
+Been away for a while? Find the one that describes you.
 
-**1. Open your Codespace.** Go to
-[github.com/codespaces](https://github.com/codespaces) and resume yours. It
-stops itself when you are not using it; nothing is lost. Takes a few seconds.
+### In a Codespace (in a browser tab)
 
-*(Working on your own machine instead? Open the folder in VS Code and skip to
-step 2.)*
+1. **Resume it.** [github.com/codespaces](https://github.com/codespaces) and
+   open yours. It stops itself when you are not using it and nothing is lost.
+   A few seconds to come back.
+2. **Start the app.** In the terminal at the bottom: `npm run dev`
+3. **Open it.** Click the **PORTS** tab next to the terminal, find port 3000,
+   click the globe icon. **`localhost:3000` will not work** - the app is
+   running on a machine in a data centre, not on your laptop. This catches
+   everyone.
+4. **Sign in.** Enter your email on the page, press the button, then in a
+   *second* terminal run `npm run signin-link` and paste the link it prints.
+5. **Ask for what you want.** The Claude icon in the left-hand bar. Not the
+   Copilot chat on the right, if you have one.
 
-**2. Start the app.** In the terminal at the bottom:
+### On your own machine
 
-```bash
-npm run dev
-```
+1. **Open the folder** in VS Code.
+2. **Start the app.** In the terminal: `npm run dev`
+3. **Open it.** [localhost:3000](http://localhost:3000)
+4. **Sign in.** Enter your email on the page, press the button, then look in
+   the terminal running `npm run dev` - the link is printed there. Or run
+   `npm run signin-link` in a second terminal.
+5. **Ask for what you want.** The Claude icon in the left-hand bar.
 
-It will not come back to a prompt. That is normal - it keeps running and
-watches your files. Leave it alone. If you need to type something else, open
-a second terminal with the **+** at the top right of the panel.
+### Either way
 
-**3. Open it.** In a Codespace, click the **PORTS** tab next to the terminal,
-find port 3000, and click the globe icon. `localhost:3000` will not work -
-the app is running on a machine in a data centre, not on your laptop.
-
-**4. Sign in.** Enter your email, press the button, then run this in a second
-terminal and paste the link it prints:
-
-```bash
-npm run signin-link
-```
-
-**5. Ask for what you want.** Click the Claude icon in the left-hand bar and
-describe the change. Not the Copilot chat on the right, if you have one.
+`npm run dev` will not come back to a prompt. That is not it hanging - it
+keeps running and watches your files. Leave it. If you need to type something
+else, open a second terminal with the **+** at the top right of the panel.
 
 Stuck? [docs/when-it-goes-wrong.md](docs/when-it-goes-wrong.md), or paste the
 error into Claude and ask what it means.
@@ -50,13 +50,26 @@ error into Claude and ask what it means.
 
 ## Setting up for the first time
 
-**In a Codespace, you are already set up.** Just run:
+First, the checklist - accounts to create, and things to install if you are
+not using a Codespace:
+[browser](docs/before-your-session-browser.md) ·
+[Windows](docs/before-your-session.md) ·
+[Mac](docs/before-your-session-mac.md)
+
+### In a Codespace
+
+Open this repository on GitHub, click the green **Code** button, then
+**Codespaces**, then **Create codespace on main**. Wait a couple of minutes.
+
+Everything is already installed. One command:
 
 ```bash
 npm run setup
 ```
 
-**On your own machine**, three commands:
+### On your own machine
+
+Needs Node.js 20 or newer.
 
 ```bash
 npx degit tufan/t-kit my-app && cd my-app
@@ -64,18 +77,14 @@ npm install
 npm run setup
 ```
 
-Either way, `npm run setup` signs you into Vercel, creates your project and
-your database, and puts it on the internet. About six minutes, and it asks
-you three things along the way. It prints the address at the end.
+### What setup does
+
+Signs you into Vercel, creates your project and your database, and puts it on
+the internet. About six minutes, and it asks you three things along the way.
+It prints the address at the end.
 
 Everything it creates belongs to your accounts. If you walk away, it is all
 still yours.
-
-First time here? Work through the checklist first - accounts to create, and
-things to install if you are not using a Codespace:
-[browser](docs/before-your-session-browser.md) ·
-[Windows](docs/before-your-session.md) ·
-[Mac](docs/before-your-session-mac.md)
 
 ---
 
