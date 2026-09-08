@@ -33,22 +33,35 @@ npm install resend
 > "Use Resend to send the magic link email in src/lib/auth.ts instead of
 > logging it to the console. The API key is in RESEND_API_KEY."
 
-## 4. Before anyone else can sign in: verify a domain
+## 4. The bit that catches everyone out
 
-**Test this before you invite anyone.** Send a sign-in email to someone who
-is not you, on a different email provider, and check it arrives.
+You can send straight away, from Resend's own address
+(`onboarding@resend.dev`). Nothing to buy, nothing to set up.
 
-Until you verify a domain you own, Resend limits what you can send. In
-practice that means it works when you try it on yourself and then does not
-work for the first person you show it to, which is a confusing way to find
-out.
+**But it will only deliver to the email address on your Resend account.**
+Send to anyone else and you get a 403 error. Resend does this on purpose, so
+that nobody ruins the shared address's reputation for everyone else.
 
-Verifying is not hard: add your domain in the Resend dashboard, copy two or
-three DNS records to wherever your domain is registered, wait a few minutes.
-The free plan allows three domains.
+So the first time you show someone your app, their sign-in email will not
+arrive. It is not broken - it is this.
 
-**If you do not own a domain**, that is the moment to buy one. About £10 a
-year, and you will want it for the app's address anyway.
+### Sending to other people
 
-**If your emails arrive but land in spam**, that is the same fix. A verified
-domain is what tells the receiving mail server you are not a stranger.
+Verify a domain you own:
+
+1. Add it in the Resend dashboard
+2. Copy the two or three DNS records it gives you to wherever your domain is
+   registered
+3. Wait a few minutes
+
+Then change the `from` address in `src/lib/auth.ts` to use it. Now you can
+send to anyone, and your emails are far less likely to land in spam. The free
+plan allows three domains.
+
+**No domain?** That is the moment to buy one. About £10 a year, and you will
+want it for your app's address anyway.
+
+**A shortcut while you are still building:** you can keep using
+`onboarding@resend.dev` and just sign in as yourself. `npm run signin-link`
+also still works and skips email entirely. Neither helps once someone else
+needs to get in.
