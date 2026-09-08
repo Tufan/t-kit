@@ -3,18 +3,25 @@
 By default, sign-in links are printed in your terminal instead of emailed.
 That's fine while you're the only user. To email them properly:
 
-## 1. Sign up for Resend
+## 1. Add Resend
 
-[resend.com](https://resend.com) - free for 3,000 emails a month, which is
-plenty. Create an API key.
-
-## 2. Add the key to your project
+One command, the same way your database was set up:
 
 ```bash
-npx vercel env add RESEND_API_KEY
+npx vercel integration add resend
 ```
 
-Paste the key when it asks. Then:
+It creates the account, and puts the API key into your project for you. The
+first time you install anything from Vercel's marketplace it opens a browser
+to accept the terms, so do that and run the command again.
+
+Free for 3,000 emails a month, capped at 100 a day. Plenty for signing
+yourself in, and enough for a small number of real users.
+
+*(Prefer to do it by hand? Sign up at [resend.com](https://resend.com), create
+an API key, and run `npx vercel env add RESEND_API_KEY`.)*
+
+## 2. Fetch the key and install the library
 
 ```bash
 npx vercel env pull .env.local
