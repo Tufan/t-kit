@@ -188,7 +188,16 @@ step(3, TOTAL, 'Naming your project')
 let projectName
 if (existsSync('.vercel/project.json')) {
   const linked = JSON.parse(readFileSync('.vercel/project.json', 'utf8'))
-  projectName = linked.projectName || 'your project'
+  // The name is also used to build the site address at the end, so it has to
+  // be the real one rather than a friendly placeholder.
+  projectName = linked.projectName
+  if (!projectName) {
+    stop(
+      "Couldn't work out your project's name",
+      'The .vercel folder is there but does not name a project.',
+      'Delete the .vercel folder and run `npm run setup` again.'
+    )
+  }
   ok(`Already linked to "${projectName}"`)
 } else {
   const rl = createInterface({ input: process.stdin, output: process.stdout })
@@ -342,33 +351,18 @@ step(8, TOTAL, 'Putting your app on the internet')
 info('This takes a minute or two the first time...')
 let url
 try {
-  const out = execSync('npx vercel deploy --prod --yes', {
-    encoding: 'utf8',
-    stdio: ['ignore', 'pipe', 'inherit'],
-  })
+  run('npx', ['vercel', 'deploy', '--prod', '--yes'])
 
-  // The deploy prints two addresses and only one of them works for you:
+  // Construct the address rather than read it back. The deploy prints two:
   //
   //   Production: https://my-app-be2awilp5-someone.vercel.app   <- SSO-locked
   //   Aliased:    https://my-app.vercel.app                     <- the public one
   //
   // Opening the Production one bounces you to a Vercel login and your own app
-  // looks broken, so take the labelled alias. Do not try to tell them apart by
-  // shape: the random part is not reliably delimited.
-  const aliased = out.match(/Aliased:\s*(https:\/\/[^\s]+\.vercel\.app)/i)
-  const production = out.match(/Production:\s*(https:\/\/[^\s]+\.vercel\.app)/i)
-
-  url = (aliased && aliased[1]) || null
-
-  if (!url) {
-    // No alias on this run. The project's own address is still the right one
-    // to hand over, and it is predictable from the project name.
-    url = `https://${projectName}.vercel.app`
-
-    // Unless the project name was taken and Vercel renamed it, in which case
-    // the deployment URL is all we have.
-    if (production && !production[1].includes(projectName)) url = production[1]
-  }
+  // looks broken. The alias is the one to hand over, and it is simply the
+  // project name, so there is nothing to parse. Both labelled lines go to
+  // stderr anyway, so capturing stdout would not find them.
+  url = `https://${projectName}.vercel.app`
 } catch {
   stop(
     "The deploy didn't finish",
