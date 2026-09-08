@@ -48,8 +48,7 @@ You haven't deployed them.
 npx vercel deploy --prod
 ```
 
-Local and live are separate. Changing your computer doesn't change the
-internet until you push it.
+Local and live are separate.
 
 ---
 
@@ -61,9 +60,8 @@ Undo everything since your last save point:
 git checkout .
 ```
 
-You lose changes since the last commit, and nothing else. This is why
-committing often matters - see rule 5 in
-[how-to-drive-the-agent.md](how-to-drive-the-agent.md).
+You lose changes since the last commit, and nothing else. See rule 5 in
+[how-to-drive-the-agent.md](how-to-drive-the-agent.md) on committing often.
 
 ---
 
@@ -99,13 +97,12 @@ globe icon. That opens the right address, which looks like
 
 ## The terminal has stopped responding after `npm run dev`
 
-It has not stopped: `npm run dev` is meant to keep running. It sits there
-watching your files and rebuilding as you change them, which is why it never
-returns to a prompt.
+`npm run dev` is meant to keep running. It sits there watching your files and
+rebuilding as you change them, so it never returns to a prompt.
 
 Leave it running and open a second terminal for anything else, with the **+**
-at the top right of the terminal panel. Pressing Ctrl+C stops the dev server
-and your preview goes down with it.
+at the top right of the terminal panel. Ctrl+C stops the dev server, and your
+preview goes down with it.
 
 ---
 
@@ -127,7 +124,8 @@ sort it out rather than editing the files by hand.
 
 Your code lives in three places: this machine, your other machine, and
 GitHub. GitHub is the one they have in common, and nothing moves between them
-on its own.
+on its own. (If you never put your project on GitHub, that is the first step
+- ask Claude to do it.)
 
 So before you switch machines:
 
