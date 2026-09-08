@@ -123,6 +123,44 @@ sort it out rather than editing the files by hand.
 
 ---
 
+## I opened it on my other computer and my work is missing
+
+Your code lives in three places: this machine, your other machine, and
+GitHub. GitHub is the one they have in common, and nothing moves between them
+on its own.
+
+So before you switch machines:
+
+```bash
+git push
+```
+
+And when you arrive at the other one:
+
+```bash
+git pull
+```
+
+If you forgot to push and the work is on the other machine, it is not lost -
+go back to that machine and push it.
+
+---
+
+## Setting up on a second machine
+
+Your Vercel connection and your settings are deliberately not stored in
+GitHub, so a second machine needs setting up once:
+
+```bash
+npm run setup
+```
+
+**Give it the same project name as before.** It will see the project already
+exists and reconnect, rather than creating a second one. Both machines then
+share the same database and the same live site.
+
+---
+
 ## "Port 3000 is already in use"
 
 You've got the app running in another window. Either use that one, or close it

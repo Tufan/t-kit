@@ -10,13 +10,25 @@ empty folder.
 
 ## Getting started
 
-Two ways to work. **Pick once and stick with it** - your project lives in one
-place or the other, not both.
+Two ways to work. Start with whichever suits you.
 
 | | |
 |---|---|
 | **In a browser** (a Codespace) | Nothing to install. Works on a locked-down work laptop or an old machine. |
 | **On your own machine** | Faster, works offline, needs Node.js 20 or newer. |
+
+**You can use both**, on the same project - a Codespace at work and your own
+laptop at home, say. Two rules if you do:
+
+1. **`git push` before you switch, `git pull` when you arrive.** GitHub is
+   what the two have in common. Forget, and you will be editing an old copy.
+2. **Each machine needs its own setup once.** Your settings and your Vercel
+   connection are deliberately not stored in GitHub, so on the second machine
+   run `npm run setup` again. It sees the project already exists and just
+   reconnects; it will not create a second one.
+
+Both talk to the *same* database and the same live site, so your data follows
+you either way.
 
 ---
 

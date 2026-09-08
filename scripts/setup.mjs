@@ -200,6 +200,10 @@ if (existsSync('.vercel/project.json')) {
   }
   ok(`Already linked to "${projectName}"`)
 } else {
+  info('If you already have this project on Vercel, give it the same name')
+  info('and this will reconnect to it rather than making a second one.')
+  say()
+
   const rl = createInterface({ input: process.stdin, output: process.stdout })
   const suggested = process.cwd().split(/[\\/]/).pop()
     .toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').slice(0, 40)
@@ -208,17 +212,25 @@ if (existsSync('.vercel/project.json')) {
   projectName = (answer || suggested)
     .toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').slice(0, 40)
 
-  info(`Creating "${projectName}" on Vercel...`)
+  // Links to the project if it already exists, creates it if not - so this
+  // is also how a second machine reconnects to a project you already have.
+  const existed = (tryRun('npx vercel project ls') || '').includes(projectName)
+
+  info(
+    existed
+      ? `Connecting to your existing "${projectName}"...`
+      : `Creating "${projectName}" on Vercel...`
+  )
   try {
     run('npx', ['vercel', 'link', '--yes', '--project', projectName])
   } catch {
     stop(
-      "Couldn't create the project on Vercel",
-      `The name "${projectName}" may already be taken in your account.`,
+      "Couldn't connect to the project on Vercel",
+      `The name "${projectName}" may be taken by someone else.`,
       'Run `npm run setup` again and choose a different name.'
     )
   }
-  ok(`Created "${projectName}"`)
+  ok(existed ? `Connected to "${projectName}"` : `Created "${projectName}"`)
 }
 
 // ---------------------------------------------------------------- 4. db
