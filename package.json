@@ -11,6 +11,7 @@
     "db:push": "node --env-file=.env.local node_modules/drizzle-kit/bin.cjs push",
     "db:studio": "node --env-file=.env.local node_modules/drizzle-kit/bin.cjs studio",
     "seed": "node --env-file=.env.local scripts/seed.mjs",
+    "signin-link": "node --env-file=.env.local scripts/signin-link.mjs",
     "examples:remove": "node scripts/remove-examples.mjs"
   },
   "dependencies": {
