@@ -9,20 +9,26 @@ import { ClientsClient } from './clients-client'
 export default async function ClientsPage() {
   const user = await requireUser()
 
-  const clients = await db
-    .select()
-    .from(client)
-    .where(eq(client.userId, user.id))
-    .orderBy(asc(client.name))
-
-  // Only fetch jobs belonging to this person's clients.
-  const jobs = clients.length
-    ? await db
-        .select()
-        .from(job)
-        .where(inArray(job.clientId, clients.map((c) => c.id)))
-        .orderBy(asc(job.createdAt))
-    : []
+  // Both at once. The jobs query finds this person's clients itself, rather
+  // than waiting for the list above, so it is one trip to the database
+  // instead of two.
+  const [clients, jobs] = await Promise.all([
+    db
+      .select()
+      .from(client)
+      .where(eq(client.userId, user.id))
+      .orderBy(asc(client.name)),
+    db
+      .select()
+      .from(job)
+      .where(
+        inArray(
+          job.clientId,
+          db.select({ id: client.id }).from(client).where(eq(client.userId, user.id))
+        )
+      )
+      .orderBy(asc(job.createdAt)),
+  ])
 
   return (
     <>
