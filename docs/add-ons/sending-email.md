@@ -47,16 +47,21 @@ arrive. It is not broken - it is this.
 
 ### Sending to other people
 
-Verify a domain you own:
+Verify a subdomain you own - the same one your app uses is fine,
+`meals.yourname.com`:
 
 1. Add it in the Resend dashboard
 2. Copy the two or three DNS records it gives you to wherever your domain is
    registered
 3. Wait a few minutes
 
-Then change the `from` address in `src/lib/auth.ts` to use it. Now you can
-send to anyone, and your emails are far less likely to land in spam. The free
-plan allows three domains.
+Then change the `from` address in `src/lib/auth.ts` to use it, so
+`hi@meals.yourname.com`. Now you can send to anyone, and your emails are far
+less likely to land in spam. The free plan allows three domains.
+
+Use a subdomain rather than your bare `yourname.com`. Resend recommends it:
+if an email of yours ever gets marked as spam, the damage stays with that
+subdomain instead of your main domain.
 
 **No domain?** That is the moment to buy one. About £10 a year, and you will
 want it for your app's address anyway.
