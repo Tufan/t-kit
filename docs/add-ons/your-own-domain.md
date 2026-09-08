@@ -56,6 +56,10 @@ Once you own a domain, add it in the Resend dashboard and copy the DNS records
 it gives you. If Vercel hosts your DNS, `npx vercel dns add` will do it, or
 your AI assistant can.
 
+The subdomain your app already answers on is fine to send from - the records
+Resend asks for sit at names underneath it, so they do not disturb the one
+pointing at your app.
+
 This is the step that lets you email anyone rather than only yourself. See
 [sending-email.md](sending-email.md).
 
