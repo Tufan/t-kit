@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { addRecipe, planMeal, deleteRecipe } from './actions'
 import { EmptyState } from '@/components/shell/empty-state'
-import { Input } from '@/components/ui'
+import { Button, Input } from '@/components/ui'
 
 type Recipe = { id: string; name: string; serves: number }
 type Planned = { id: string; onDate: string; recipeId: string | null }
@@ -78,23 +78,22 @@ export function MealsClient({
             name="name"
             placeholder="Recipe name"
             required
-             className="flex-1"
+            aria-label="Recipe name"
+            className="flex-1"
           />
-          <Input
-            name="serves"
-            type="number"
-            min="1"
-            defaultValue={2}
-            aria-label="Serves how many"
-             className="w-20"
-          />
-          <button
-            type="submit"
-            disabled={adding}
-            className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
-          >
+          <label className="flex items-center gap-2 text-sm text-muted">
+            serves
+            <Input
+              name="serves"
+              type="number"
+              min="1"
+              defaultValue={2}
+              className="w-16"
+            />
+          </label>
+          <Button type="submit" disabled={adding}>
             {adding ? 'Adding...' : 'Add'}
-          </button>
+          </Button>
         </form>
 
         {recipes.length === 0 ? (

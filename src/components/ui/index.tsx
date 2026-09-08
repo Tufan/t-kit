@@ -23,6 +23,17 @@ function cx(...parts: (string | false | null | undefined)[]) {
   return parts.filter(Boolean).join(' ')
 }
 
+/**
+ * Drop the component's own default width if the caller passed one of their
+ * own. Both would otherwise apply and the stylesheet order would decide,
+ * so `<Input className="w-20" />` came out full width instead of 20.
+ *
+ * Width only. Everything else here is meant to accumulate.
+ */
+function widthFrom(className: string | undefined, fallback: string) {
+  return className && /(^|\s)w-\S+/.test(className) ? '' : fallback
+}
+
 const controlBase =
   'rounded-md border border-border bg-surface px-3 py-2 text-sm ' +
   'outline-none focus-visible:ring-2 focus-visible:ring-accent'
@@ -61,14 +72,24 @@ export function Input({
   className,
   ...props
 }: InputHTMLAttributes<HTMLInputElement>) {
-  return <input className={cx(controlBase, 'w-full', className)} {...props} />
+  return (
+    <input
+      className={cx(controlBase, widthFrom(className, 'w-full'), className)}
+      {...props}
+    />
+  )
 }
 
 export function Select({
   className,
   ...props
 }: SelectHTMLAttributes<HTMLSelectElement>) {
-  return <select className={cx(controlBase, 'w-full', className)} {...props} />
+  return (
+    <select
+      className={cx(controlBase, widthFrom(className, 'w-full'), className)}
+      {...props}
+    />
+  )
 }
 
 /* --------------------------------------------------------------- Field */
