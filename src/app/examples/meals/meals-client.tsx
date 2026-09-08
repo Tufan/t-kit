@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { addRecipe, planMeal, deleteRecipe } from './actions'
 import { EmptyState } from '@/components/shell/empty-state'
+import { Input } from '@/components/ui'
 
 type Recipe = { id: string; name: string; serves: number }
 type Planned = { id: string; onDate: string; recipeId: string | null }
@@ -73,19 +74,19 @@ export function MealsClient({
           id="recipe-form"
           className="mb-4 flex gap-2"
         >
-          <input
+          <Input
             name="name"
             placeholder="Recipe name"
             required
-            className="flex-1 rounded-md border border-border bg-surface px-3 py-2 text-sm"
+             className="flex-1"
           />
-          <input
+          <Input
             name="serves"
             type="number"
             min="1"
             defaultValue={2}
             aria-label="Serves how many"
-            className="w-20 rounded-md border border-border bg-surface px-3 py-2 text-sm"
+             className="w-20"
           />
           <button
             type="submit"

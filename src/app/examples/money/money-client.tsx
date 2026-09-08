@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { addExpense, deleteExpense } from './actions'
 import { EmptyState } from '@/components/shell/empty-state'
+import { Button, Input, Select, Stat, Table, Th, Td } from '@/components/ui'
 
 type Expense = {
   id: string
@@ -31,11 +32,8 @@ export function MoneyClient({
 
   return (
     <>
-      <div className="mb-6 rounded-lg border border-border bg-surface p-4">
-        <p className="text-sm text-muted">Spent this month</p>
-        <p className="mt-1 text-3xl font-semibold tabular-nums">
-          {money(monthTotal)}
-        </p>
+      <div className="mb-6">
+        <Stat label="Spent this month" value={money(monthTotal)} />
       </div>
 
       <form
@@ -48,43 +46,36 @@ export function MoneyClient({
         id="expense-form"
         className="mb-6 flex flex-wrap gap-2"
       >
-        <input
+        <Input
           type="date"
           name="spentOn"
           defaultValue={today}
           required
-          className="rounded-md border border-border bg-surface px-3 py-2 text-sm"
+          className="w-auto"
         />
-        <input
+        <Input
           name="description"
           placeholder="What was it?"
           required
-          className="min-w-40 flex-1 rounded-md border border-border bg-surface px-3 py-2 text-sm"
+          className="min-w-40 flex-1"
         />
-        <select
-          name="category"
-          className="rounded-md border border-border bg-surface px-3 py-2 text-sm"
-        >
+        <Select name="category" className="w-auto">
           {CATEGORIES.map((c) => (
             <option key={c}>{c}</option>
           ))}
-        </select>
-        <input
+        </Select>
+        <Input
           name="amount"
           type="number"
           step="0.01"
           min="0.01"
           placeholder="0.00"
           required
-          className="w-24 rounded-md border border-border bg-surface px-3 py-2 text-sm"
+          className="w-24"
         />
-        <button
-          type="submit"
-          disabled={adding}
-          className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
-        >
+        <Button type="submit" disabled={adding}>
           {adding ? 'Adding...' : 'Add'}
-        </button>
+        </Button>
       </form>
 
       {rows.length === 0 ? (
@@ -92,45 +83,41 @@ export function MoneyClient({
           Nothing here yet. Add an expense above.
         </EmptyState>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-border bg-surface">
-          <table className="w-full text-sm">
-            <thead className="border-b border-border text-left text-muted">
-              <tr>
-                <th className="px-4 py-2 font-medium">Date</th>
-                <th className="px-4 py-2 font-medium">Description</th>
-                <th className="px-4 py-2 font-medium">Category</th>
-                <th className="px-4 py-2 text-right font-medium">Amount</th>
-                <th className="w-10" />
+        <Table>
+          <thead className="border-b border-border text-left text-muted">
+            <tr>
+              <Th>Date</Th>
+              <Th>Description</Th>
+              <Th>Category</Th>
+              <Th align="right">Amount</Th>
+              <th className="w-10" />
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.id} className="border-b border-border last:border-0">
+                <Td className="whitespace-nowrap text-muted">
+                  {new Date(r.spentOn).toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                  })}
+                </Td>
+                <Td>{r.description}</Td>
+                <Td className="text-muted">{r.category}</Td>
+                <Td align="right">{money(r.amountPence)}</Td>
+                <Td className="px-2">
+                  <button
+                    onClick={() => deleteExpense(r.id)}
+                    aria-label={`Delete ${r.description}`}
+                    className="rounded px-2 py-1 text-muted hover:text-red-600"
+                  >
+                    ×
+                  </button>
+                </Td>
               </tr>
-            </thead>
-            <tbody>
-              {rows.map((r) => (
-                <tr key={r.id} className="border-b border-border last:border-0">
-                  <td className="whitespace-nowrap px-4 py-2 text-muted">
-                    {new Date(r.spentOn).toLocaleDateString('en-GB', {
-                      day: 'numeric',
-                      month: 'short',
-                    })}
-                  </td>
-                  <td className="px-4 py-2">{r.description}</td>
-                  <td className="px-4 py-2 text-muted">{r.category}</td>
-                  <td className="px-4 py-2 text-right tabular-nums">
-                    {money(r.amountPence)}
-                  </td>
-                  <td className="px-2 py-2">
-                    <button
-                      onClick={() => deleteExpense(r.id)}
-                      aria-label={`Delete ${r.description}`}
-                      className="rounded px-2 py-1 text-muted hover:text-red-600"
-                    >
-                      ×
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </Table>
       )}
     </>
   )

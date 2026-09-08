@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { addClient, addJob, setJobStatus } from './actions'
 import { EmptyState } from '@/components/shell/empty-state'
+import { Input } from '@/components/ui'
 
 type Client = { id: string; name: string; email: string | null }
 type Job = {
@@ -48,17 +49,17 @@ export function ClientsClient({
         id="client-form"
         className="mb-6 flex flex-wrap gap-2"
       >
-        <input
+        <Input
           name="name"
           placeholder="Client name"
           required
-          className="min-w-40 flex-1 rounded-md border border-border bg-surface px-3 py-2 text-sm"
+           className="min-w-40 flex-1"
         />
-        <input
+        <Input
           name="email"
           type="email"
           placeholder="Email (optional)"
-          className="min-w-40 flex-1 rounded-md border border-border bg-surface px-3 py-2 text-sm"
+           className="min-w-40 flex-1"
         />
         <button
           type="submit"

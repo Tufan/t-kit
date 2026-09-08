@@ -52,6 +52,10 @@ writing any code.
   `npm run db:push` to apply it. Never write raw `CREATE TABLE`.
 - **Money is stored in pence/cents as an integer**, never a float.
 - **Dates are stored as `date` or `timestamp`**, never as a string.
+- **Use the components in `src/components/ui`** - `Button`, `Input`, `Select`,
+  `Field`, `Card`, `Stat`, `Table`, `Badge` - rather than writing the same
+  Tailwind classes again. If you need something that is not there, add it to
+  that file rather than inlining it in a page.
 
 ## Adding a feature - the shape to copy
 

@@ -15,6 +15,8 @@ else can use:
 
 The rest:
 
+- [better-looking-components.md](better-looking-components.md) - shadcn/ui, and where to browse what is available
+
 - [file-uploads.md](file-uploads.md) - let people upload photos or documents
 - [scheduled-jobs.md](scheduled-jobs.md) - make something happen every day
 - [payments.md](payments.md) - take money
