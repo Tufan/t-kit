@@ -238,13 +238,31 @@ step(5, TOTAL, 'Setting up sign-in for your app')
 
 if (!envHas('BETTER_AUTH_SECRET')) {
   const secret = randomBytes(32).toString('base64url')
+  const failed = []
   for (const env of ['production', 'preview', 'development']) {
-    const r = spawnSync(
-      'npx',
-      ['vercel', 'env', 'add', 'BETTER_AUTH_SECRET', env, '--force'],
-      { input: secret, stdio: ['pipe', 'ignore', 'ignore'], shell: process.platform === 'win32' }
+    // One retry: these calls occasionally lose a race with the project
+    // having only just been created.
+    let okHere = false
+    for (let attempt = 0; attempt < 2 && !okHere; attempt++) {
+      const r = spawnSync(
+        'npx',
+        ['vercel', 'env', 'add', 'BETTER_AUTH_SECRET', env, '--force'],
+        { input: secret, stdio: ['pipe', 'ignore', 'ignore'], shell: process.platform === 'win32' }
+      )
+      okHere = r.status === 0
+    }
+    if (!okHere) failed.push(env)
+  }
+  if (failed.includes('production')) {
+    stop(
+      "Couldn't save the sign-in secret",
+      'Without it, sign-in will not work on your live site.',
+      'Run `npm run setup` again. If it fails twice, send me what you see.'
     )
-    if (r.status !== 0) warn(`Could not save the secret for ${env} (will retry on next run)`)
+  }
+  if (failed.length) {
+    warn(`Sign-in secret not saved for: ${failed.join(', ')}`)
+    warn('Your live site is fine. Only preview deployments are affected.')
   }
   ok('Created a sign-in secret')
 } else {
