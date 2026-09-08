@@ -70,19 +70,19 @@ committing often matters - see rule 5 in
 ## Signed in locally, but the live site won't let me in
 
 Your local sign-in doesn't carry over - they're separate. Sign in again on the
-live site. The link goes to your Vercel logs rather than your terminal, and
-those logs stream live, so **start them before you ask for the link**:
+live site:
 
-1. Open a second terminal and leave this running:
+1. On your live site, enter your email and press **Email me a link**.
+2. In a terminal, run:
 
    ```bash
-   npx vercel logs your-app.vercel.app
+   npm run signin-link
    ```
 
-2. Back in the browser, enter your email and press **Email me a link**.
-3. The link appears in the terminal from step 1. Paste it into the browser.
+3. Paste the link it prints into your browser.
 
-The link expires after five minutes, so if you miss it just ask for another.
+You can run that as often as you like. If the link has expired, ask for a new
+one in the browser and run it again.
 
 ---
 

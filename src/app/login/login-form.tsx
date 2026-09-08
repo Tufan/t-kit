@@ -22,11 +22,8 @@ export function LoginForm() {
           We sent a sign-in link to {email}.
         </p>
         <p className="mt-3 text-xs text-muted">
-          Not set up to send email yet? The link goes to your logs instead.
-          Locally that is the terminal running <code>npm run dev</code>. On
-          your live site, run <code>npx vercel logs your-app.vercel.app</code>
-          in a terminal and ask for another link, since those logs only show
-          what happens after you start them.
+          Not set up to send email yet? Run <code>npm run signin-link</code> in
+          a terminal and it will print the link.
         </p>
       </div>
     )

@@ -38,11 +38,9 @@ end.
 
 Open the address it gave you and sign in with your email.
 
-Sending real email is not set up yet, so the sign-in link goes to your logs.
-They stream live, so start them first: in a second terminal run
-`npx vercel logs your-app.vercel.app` and leave it going, then ask for the
-link in the browser. It appears in that terminal. Then click around the three
-example apps.
+Sending real email is not set up yet, so instead of waiting for a message,
+run `npm run signin-link` and it prints the link. Paste that into your
+browser. Then click around the three example apps.
 
 To make your first change, follow
 [docs/your-first-change.md](docs/your-first-change.md).
@@ -69,12 +67,17 @@ something working to look at and copy. Delete them when you are ready with
 
 ```bash
 npm run dev              # work on it locally
+npm run signin-link      # print your sign-in link
 npm run db:push          # apply changes to your database
 npm run db:studio        # browse your data
 npm run seed             # put the example data back
 npm run examples:remove  # clear out the examples
-npx vercel deploy --prod # put changes live
+npx vercel deploy --prod # put changes live now
 ```
+
+**Your code is connected to your live site.** Setup links the two, so
+anything you commit deploys automatically a minute or so later. `vercel
+deploy --prod` is only for when you want it live immediately.
 
 ## If something breaks
 
