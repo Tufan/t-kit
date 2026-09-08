@@ -347,20 +347,27 @@ try {
     stdio: ['ignore', 'pipe', 'inherit'],
   })
 
-  // Do not just take the last line: the CLI now ends with machine-readable
-  // output, so the last line is a closing brace. Find a real address.
-  const urls = out.match(/https:\/\/[a-z0-9.-]+\.vercel\.app/gi) || []
+  // The deploy prints two addresses and only one of them works for you:
+  //
+  //   Production: https://my-app-be2awilp5-someone.vercel.app   <- SSO-locked
+  //   Aliased:    https://my-app.vercel.app                     <- the public one
+  //
+  // Opening the Production one bounces you to a Vercel login and your own app
+  // looks broken, so take the labelled alias. Do not try to tell them apart by
+  // shape: the random part is not reliably delimited.
+  const aliased = out.match(/Aliased:\s*(https:\/\/[^\s]+\.vercel\.app)/i)
+  const production = out.match(/Production:\s*(https:\/\/[^\s]+\.vercel\.app)/i)
 
-  // Prefer the short project alias. The long deployment URL is protected by
-  // Vercel SSO, so opening it bounces you to a Vercel login and the app looks
-  // broken. `vercel deploy` prints both; only the alias is public.
-  url = urls.find((u) => !/-[a-z0-9]{9,}-/i.test(u)) || urls[0]
+  url = (aliased && aliased[1]) || null
 
   if (!url) {
-    // Nothing usable in the output, so ask Vercel directly.
-    const alias = tryRun('npx vercel project ls --json', 30000)
-    const m = alias && alias.match(/https:\/\/[a-z0-9.-]+\.vercel\.app/i)
-    url = m ? m[0] : `https://${projectName}.vercel.app`
+    // No alias on this run. The project's own address is still the right one
+    // to hand over, and it is predictable from the project name.
+    url = `https://${projectName}.vercel.app`
+
+    // Unless the project name was taken and Vercel renamed it, in which case
+    // the deployment URL is all we have.
+    if (production && !production[1].includes(projectName)) url = production[1]
   }
 } catch {
   stop(
