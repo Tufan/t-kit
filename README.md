@@ -1,28 +1,62 @@
 # t-kit
 
-Tufan's AI Starter Kit - everything you need to turn an idea into a real,
-working app on the internet.
+Everything you need to turn an idea into a real, working app on the internet.
 
 Next.js and React, a Postgres database, sign-in that works, and hosting. All
 wired together and deployed, so you start from a running app rather than an
 empty folder.
 
-## Before you start
+---
 
-Work through the pre-session checklist first: accounts to create and, if you
-are working locally, things to install.
+## Picking this back up
 
-- **Browser only, nothing to install** (works on a locked-down or old
-  machine): [docs/before-your-session-browser.md](docs/before-your-session-browser.md)
-- Windows: [docs/before-your-session.md](docs/before-your-session.md)
-- Mac: [docs/before-your-session-mac.md](docs/before-your-session-mac.md)
+Been away for a while? Start here.
 
-Working locally needs Node.js 20 or newer. The browser route does not: the
-machine it runs on already has everything.
+**1. Open your Codespace.** Go to
+[github.com/codespaces](https://github.com/codespaces) and resume yours. It
+stops itself when you are not using it; nothing is lost. Takes a few seconds.
 
-## Getting started
+*(Working on your own machine instead? Open the folder in VS Code and skip to
+step 2.)*
 
-Three commands:
+**2. Start the app.** In the terminal at the bottom:
+
+```bash
+npm run dev
+```
+
+It will not come back to a prompt. That is normal - it keeps running and
+watches your files. Leave it alone. If you need to type something else, open
+a second terminal with the **+** at the top right of the panel.
+
+**3. Open it.** In a Codespace, click the **PORTS** tab next to the terminal,
+find port 3000, and click the globe icon. `localhost:3000` will not work -
+the app is running on a machine in a data centre, not on your laptop.
+
+**4. Sign in.** Enter your email, press the button, then run this in a second
+terminal and paste the link it prints:
+
+```bash
+npm run signin-link
+```
+
+**5. Ask for what you want.** Click the Claude icon in the left-hand bar and
+describe the change. Not the Copilot chat on the right, if you have one.
+
+Stuck? [docs/when-it-goes-wrong.md](docs/when-it-goes-wrong.md), or paste the
+error into Claude and ask what it means.
+
+---
+
+## Setting up for the first time
+
+**In a Codespace, you are already set up.** Just run:
+
+```bash
+npm run setup
+```
+
+**On your own machine**, three commands:
 
 ```bash
 npx degit tufan/t-kit my-app && cd my-app
@@ -30,24 +64,37 @@ npm install
 npm run setup
 ```
 
-`npm run setup` will ask you to sign in to Vercel, then create your project,
-your database, and put your app on the internet. It prints the address at the
-end.
+Either way, `npm run setup` signs you into Vercel, creates your project and
+your database, and puts it on the internet. About six minutes, and it asks
+you three things along the way. It prints the address at the end.
 
-## Then what?
+Everything it creates belongs to your accounts. If you walk away, it is all
+still yours.
 
-Open the address it gave you and sign in with your email.
+First time here? Work through the checklist first - accounts to create, and
+things to install if you are not using a Codespace:
+[browser](docs/before-your-session-browser.md) ·
+[Windows](docs/before-your-session.md) ·
+[Mac](docs/before-your-session-mac.md)
 
-Sending real email is not set up yet, so instead of waiting for a message,
-run `npm run signin-link` and it prints the link. Paste that into your
-browser. Then click around the three example apps.
+---
 
-To make your first change, follow
-[docs/your-first-change.md](docs/your-first-change.md).
+## Commands
 
-When you want to build your own thing, ask your AI assistant. Start with
-[docs/how-to-drive-the-agent.md](docs/how-to-drive-the-agent.md) - five rules
-that make the difference between a good session and a frustrating one.
+```bash
+npm run dev              # work on it locally
+npm run signin-link      # print your sign-in link
+npm run db:push          # apply changes to your database
+npm run db:studio        # browse your data
+npm run seed             # put the example data back
+npm run examples:remove  # clear out the examples
+```
+
+**Your code is connected to your live site.** Committing a change deploys it
+automatically a minute or so later. `npx vercel deploy --prod` is only for
+when you want it live immediately.
+
+---
 
 ## What's in the box
 
@@ -59,29 +106,34 @@ that make the difference between a good session and a frustrating one.
 | Sign-in | Better Auth, emailed link |
 | Hosting | Vercel |
 
+Four separate companies, four accounts, all yours: **GitHub** keeps your code
+and its history, **Vercel** runs the app, **Neon** is the database, and
+**Claude** writes the code with you. Any of them could be swapped for
+something else later.
+
 Three example apps come installed - meals, money and clients - so there is
 something working to look at and copy. Delete them when you are ready with
 `npm run examples:remove`.
 
-## Commands
+Shared buttons, inputs and tables live in `src/components/ui`. Use those
+rather than styling things from scratch, and everything stays consistent.
 
-```bash
-npm run dev              # work on it locally
-npm run signin-link      # print your sign-in link
-npm run db:push          # apply changes to your database
-npm run db:studio        # browse your data
-npm run seed             # put the example data back
-npm run examples:remove  # clear out the examples
-npx vercel deploy --prod # put changes live now
-```
+---
 
-**Your code is connected to your live site.** Setup links the two, so
-anything you commit deploys automatically a minute or so later. `vercel
-deploy --prod` is only for when you want it live immediately.
+## Learning your way around
 
-## If something breaks
+- [docs/how-to-drive-the-agent.md](docs/how-to-drive-the-agent.md) - **the
+  one worth reading.** How to break an idea into steps an AI can build, and
+  what to do when it goes wrong.
+- [docs/your-first-change.md](docs/your-first-change.md) - a small change,
+  start to finish.
+- [docs/when-it-goes-wrong.md](docs/when-it-goes-wrong.md) - the failure
+  catalogue. Common problems and their fixes.
+- [docs/add-ons/](docs/add-ons/) - things the kit does not do out of the box:
+  real emails, your own domain, file uploads, payments, better-looking
+  components. Do not read these until you need one.
 
-[docs/when-it-goes-wrong.md](docs/when-it-goes-wrong.md)
+---
 
 ## Licence
 
