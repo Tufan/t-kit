@@ -37,6 +37,13 @@ function stop(what, why, fix) {
 
 // ---------------------------------------------------------------- shell
 
+// When an AI agent is driving, the Vercel CLI prints a machine-readable hint
+// line into the middle of the output. It is meaningless to a person reading
+// along and looks like an error, so hide it from the commands we run.
+const childEnv = { ...process.env }
+delete childEnv.CLAUDECODE
+delete childEnv.CLAUDE_CODE
+
 /**
  * Run a command, capture output. Returns null instead of throwing.
  *
@@ -50,6 +57,7 @@ function tryRun(cmd, timeout = 20000) {
       stdio: ['ignore', 'pipe', 'pipe'],
       encoding: 'utf8',
       timeout,
+      env: childEnv,
     }).trim()
   } catch {
     return null
@@ -65,7 +73,7 @@ function runAnswering(cmd, args, answer, extraEnv = {}) {
     input: answer,
     stdio: ['pipe', 'inherit', 'inherit'],
     shell: process.platform === 'win32',
-    env: { ...process.env, ...extraEnv },
+    env: { ...childEnv, ...extraEnv },
   })
   if (r.status !== 0) throw new Error(`${cmd} ${args.join(' ')} exited ${r.status}`)
 }
@@ -75,7 +83,7 @@ function run(cmd, args, extraEnv = {}) {
   const r = spawnSync(cmd, args, {
     stdio: 'inherit',
     shell: process.platform === 'win32',
-    env: { ...process.env, ...extraEnv },
+    env: { ...childEnv, ...extraEnv },
   })
   if (r.status !== 0) throw new Error(`${cmd} ${args.join(' ')} exited ${r.status}`)
 }
@@ -334,10 +342,26 @@ step(8, TOTAL, 'Putting your app on the internet')
 info('This takes a minute or two the first time...')
 let url
 try {
-  url = execSync('npx vercel deploy --prod --yes', {
+  const out = execSync('npx vercel deploy --prod --yes', {
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'inherit'],
-  }).trim().split('\n').filter(Boolean).pop()
+  })
+
+  // Do not just take the last line: the CLI now ends with machine-readable
+  // output, so the last line is a closing brace. Find a real address.
+  const urls = out.match(/https:\/\/[a-z0-9.-]+\.vercel\.app/gi) || []
+
+  // Prefer the short project alias. The long deployment URL is protected by
+  // Vercel SSO, so opening it bounces you to a Vercel login and the app looks
+  // broken. `vercel deploy` prints both; only the alias is public.
+  url = urls.find((u) => !/-[a-z0-9]{9,}-/i.test(u)) || urls[0]
+
+  if (!url) {
+    // Nothing usable in the output, so ask Vercel directly.
+    const alias = tryRun('npx vercel project ls --json', 30000)
+    const m = alias && alias.match(/https:\/\/[a-z0-9.-]+\.vercel\.app/i)
+    url = m ? m[0] : `https://${projectName}.vercel.app`
+  }
 } catch {
   stop(
     "The deploy didn't finish",
