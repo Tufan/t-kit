@@ -29,7 +29,7 @@ they should never be restored uninvited.
 
 ---
 
-## 0.3.0 - 2026-09-09
+## 0.2.0 - 2026-09-09
 
 ### One way in, and setup checks everything before it builds anything
 
@@ -65,10 +65,6 @@ back.
 GitHub CLI (`gh`) to be installed and signed in, where before it warned and
 carried on. Codespaces already have it. If you re-run setup locally and it
 stops, `gh auth login` is the fix.
-
----
-
-## 0.2.0 - 2026-09-09
 
 ### Google sign-in turns itself on when its credentials are set
 
