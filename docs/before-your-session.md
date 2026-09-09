@@ -57,16 +57,15 @@ Open VS Code → Extensions (the squares icon in the left bar) → search
 [cli.github.com](https://cli.github.com) → download and install, taking all
 the defaults.
 
-This is how your computer talks to GitHub. Once it's installed, open a
-terminal and run:
+This is the easiest way to let your computer save work to GitHub. Once it's
+installed, open a terminal and run:
 
 ```
 gh auth login
 ```
 
 Answer **GitHub.com**, then **HTTPS**, then **Login with a web browser**. It
-gives you a code, opens GitHub, and you paste the code in. Setup will not run
-until this is done.
+gives you a code, opens GitHub, and you paste the code in.
 
 ---
 

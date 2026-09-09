@@ -13,7 +13,7 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { randomBytes } from 'node:crypto'
 import { createInterface } from 'node:readline/promises'
 import { productionUrl } from './site-url.mjs'
-import { tidyName, ghReady, ghUser, vercelAddressFree } from './pick-name.mjs'
+import { tidyName, vercelAddressFree } from './pick-name.mjs'
 
 // ---------------------------------------------------------------- output
 
@@ -186,16 +186,27 @@ ok(`Saving your work to ${repoSlug}`)
 
 // Pushing is how the site gets deployed, so being unable to push is not
 // something to discover at the end.
-if (!ghReady()) {
+//
+// Ask git, not `gh`. A Codespace authenticates pushes with a token in the
+// environment, and does not necessarily have `gh` installed at all - so
+// checking `gh auth status` fails on a machine where pushing works
+// perfectly. Reaching the repository is the thing that actually matters.
+if (!tryRun('git ls-remote origin', 30000)) {
   stop(
-    'GitHub is not signed in here',
-    'Setup pushes your work to GitHub, and your site deploys from there.',
-    'Run:\n    gh auth login\n\n' +
+    `Cannot reach ${repoSlug} on GitHub`,
+    'Setup pushes your work to GitHub, and your site deploys from there.\n' +
+    '  Either this computer is not signed in to GitHub, or the repository\n' +
+    '  has been renamed or deleted.',
+    'First check the address is right:\n' +
+    '    git remote -v\n\n' +
+    '  If that looks correct, sign in. The simplest way is the GitHub CLI\n' +
+    '  from https://cli.github.com, then:\n' +
+    '    gh auth login\n\n' +
     '  Choose GitHub.com, HTTPS, and authenticate in the browser. Then run\n' +
     '  `npm run setup` again.'
   )
 }
-ok(`Signed in to GitHub as ${ghUser() ?? 'you'}`)
+ok(`${repoSlug} is reachable`)
 
 const hasVercel = tryRun('npx vercel --version')
 if (!hasVercel) {

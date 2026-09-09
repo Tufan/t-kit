@@ -61,10 +61,11 @@ have will ask for a project name that this one derives. Otherwise ignore it.
 If you have deleted `docs/`, ignore the documentation half. Do not put it
 back.
 
-**One thing to know either way:** on your own machine, setup now requires the
-GitHub CLI (`gh`) to be installed and signed in, where before it warned and
-carried on. Codespaces already have it. If you re-run setup locally and it
-stops, `gh auth login` is the fix.
+**One thing to know either way:** setup now stops if it cannot reach your
+repository on GitHub, where before it warned and carried on. It tests that by
+asking git, so however your machine already authenticates is fine. If you
+re-run setup somewhere that has never been signed in to GitHub, `gh auth
+login` is the usual fix.
 
 ### Google sign-in turns itself on when its credentials are set
 
