@@ -12,6 +12,7 @@ import { execSync, spawnSync } from 'node:child_process'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { randomBytes } from 'node:crypto'
 import { createInterface } from 'node:readline/promises'
+import { productionUrl } from './site-url.mjs'
 
 // ---------------------------------------------------------------- output
 
@@ -128,6 +129,28 @@ if (!existsSync('.git')) {
   }
 } else {
   ok('Git history')
+}
+
+// Opening a Codespace directly on the kit - rather than on a copy made with
+// "Use this template" - gives you a working machine attached to a repository
+// you cannot save to. Vercel then tries to link the project to it and fails
+// with "You need admin or write access", which says nothing about the actual
+// cause. Catch it here, before anything is created.
+const originUrl = tryRun('git remote get-url origin')
+if (originUrl && /[:/]tufan\/t-kit(\.git)?$/i.test(originUrl)) {
+  stop(
+    'This is the kit itself, not your own copy',
+    'Your project is pointing at the original t-kit repository, which you\n' +
+    '  cannot save your work to. That happens if you opened a Codespace\n' +
+    '  straight from the kit instead of making your own copy of it first.',
+    'Open https://github.com/tufan/t-kit, press "Use this template" and\n' +
+    '  choose "Create a new repository". Then, on your new repository,\n' +
+    '  press "Code" and create a Codespace there, and run `npm run setup`.\n\n' +
+    '  Already part-way through and in a hurry? Run:\n' +
+    '    git remote remove origin\n' +
+    '  and setup will work - but your work will only exist on this machine\n' +
+    '  until you give it a repository of your own.'
+  )
 }
 
 // ---------------------------------------------------------------- 2. vercel
@@ -365,16 +388,18 @@ let url
 try {
   run('npx', ['vercel', 'deploy', '--prod', '--yes'])
 
-  // Construct the address rather than read it back. The deploy prints two:
+  // The deploy prints two addresses:
   //
   //   Production: https://my-app-be2awilp5-someone.vercel.app   <- SSO-locked
   //   Aliased:    https://my-app.vercel.app                     <- the public one
   //
   // Opening the Production one bounces you to a Vercel login and your own app
-  // looks broken. The alias is the one to hand over, and it is simply the
-  // project name, so there is nothing to parse. Both labelled lines go to
-  // stderr anyway, so capturing stdout would not find them.
-  url = `https://${projectName}.vercel.app`
+  // looks broken, so the alias is the one to hand over. Both labelled lines go
+  // to stderr, so capturing stdout would not find them - and the alias cannot
+  // be assumed to match the project name, because `my-app.vercel.app` may
+  // already belong to someone else. Vercel keeps your project name either way
+  // and quietly aliases it to something else, so ask which one it used.
+  url = productionUrl(projectName)
 } catch {
   stop(
     "The deploy didn't finish",
@@ -389,6 +414,23 @@ say()
 say(`${c.green}${c.bold}  Done. Your app is live.${c.reset}`)
 say()
 say(`  ${c.bold}${url}${c.reset}`)
+
+// Record it so `npm run signin-link` builds links against the same address.
+// This has to happen after the deploy, because the address does not exist
+// until the project has been deployed at least once. `vercel env pull`
+// rewrites this file, so anything that pulls again will drop the line - and
+// re-running setup puts it back.
+try {
+  const existing = existsSync(envFile) ? readFileSync(envFile, 'utf8') : ''
+  if (!/^BETTER_AUTH_URL=/m.test(existing)) {
+    writeFileSync(
+      envFile,
+      `${existing.replace(/\n*$/, '\n')}\n# The public address of your app.\nBETTER_AUTH_URL=${url}\n`
+    )
+  }
+} catch {
+  // Not fatal: signin-link falls back to asking Vercel directly.
+}
 say()
 say(`  ${c.dim}To sign in: open the address above, enter your email, and${c.reset}`)
 say(`  ${c.dim}press the button. Sending real email is not set up yet, so${c.reset}`)

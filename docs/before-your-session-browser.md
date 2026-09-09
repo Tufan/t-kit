@@ -76,8 +76,13 @@ genuinely useful, then build on it.
 
 We will do this together, but so you know what is coming:
 
-1. Open the kit's repository and choose **Use this template**, then **Open in
-   a codespace**. That gives you your own copy on your own cloud machine.
+1. Open the kit's repository, choose **Use this template** → **Create a new
+   repository** to get your own copy, then **Code** → **Codespaces** on that
+   new repository to get your own cloud machine.
+
+   Two separate steps, and the copy has to come first - there is a tempting
+   **Open in a codespace** on the same menu that skips it and leaves you with
+   nowhere to save your work.
 2. Wait a minute while it sets itself up.
 3. In the terminal, run `npm run setup`. It will ask you to approve a link
    for Vercel, name your project, and give the email you will sign in with.

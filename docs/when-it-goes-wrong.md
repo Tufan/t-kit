@@ -5,6 +5,43 @@ error text - don't summarise it.
 
 ---
 
+## "You need admin or write access to the repository"
+
+Setup stopped while connecting to Vercel, with a message about not having
+write access to `t-kit`.
+
+You are working in a copy of the kit that belongs to me, not a copy of your
+own - which happens if you chose **Open in a codespace** on the template menu
+instead of **Create a new repository**.
+
+The fix is to make your own copy: open
+[the kit](https://github.com/tufan/t-kit), press **Use this template** →
+**Create a new repository**, then **Code** → **Codespaces** on your new
+repository. Run `npm run setup` there. You can delete the old Codespace at
+[github.com/codespaces](https://github.com/codespaces).
+
+If you are part-way through and would rather keep going, `git remote remove
+origin` lets setup finish - but your work then only exists on that machine
+until you give it a repository of your own.
+
+---
+
+## My app's address doesn't match my project name
+
+You called the project `carpentry`, but the live site is at something like
+`carpentry-4f2b.vercel.app`.
+
+Nothing is wrong. `.vercel.app` addresses are shared by everyone who uses
+Vercel, so if the plain one was already taken, Vercel keeps your project name
+and gives it a slightly different public address.
+
+Setup prints the real one when it finishes, and you can always see it on your
+[Vercel dashboard](https://vercel.com/dashboard). If you would rather have a
+tidier address, open your project there, then **Settings** → **Domains**, and
+add any free `.vercel.app` name that nobody has taken.
+
+---
+
 ## "DATABASE_URL is missing"
 
 Your app can't find your database.
