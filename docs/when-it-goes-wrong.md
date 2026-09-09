@@ -49,6 +49,29 @@ npm run setup
 
 ---
 
+## "Invalid origin" when you try to sign in
+
+The page loads, you enter your email, and nothing happens. The terminal
+running `npm run dev` shows:
+
+```
+ERROR [Better Auth]: Invalid origin: http://localhost:3000
+```
+
+Sign-in checks that the address in your browser is one the app expects, and
+refuses anything else - so the app has the wrong idea of where it is running.
+
+In a Codespace this is worked out for you, so the usual cause is a
+`BETTER_AUTH_URL` line in `.env.local` left over from somewhere else. Either
+delete that line or set it to the address you are actually using, then stop
+`npm run dev` with **Ctrl+C** and start it again. `.env.local` is only read
+when the server starts.
+
+The address it wants is the one in your browser's bar, with no trailing
+slash and nothing after the domain.
+
+---
+
 ## "Cannot reach [your repository] on GitHub"
 
 Setup stopped at the first step, before creating anything. Either this

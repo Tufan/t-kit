@@ -3,15 +3,11 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { magicLink } from 'better-auth/plugins'
 import { db } from './db'
 import * as schema from './schema/auth'
+import { resolveBaseURL } from './base-url'
 
-/**
- * Where the app is running. Vercel sets VERCEL_PROJECT_PRODUCTION_URL for
- * you, so this works locally and once deployed without you changing anything.
- */
-const baseURL = process.env.BETTER_AUTH_URL
-  ?? (process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : 'http://localhost:3000')
+// Where the app is reachable - localhost, a Codespace, or your live site.
+// Sign-in is rejected if this does not match the address in the browser.
+const baseURL = resolveBaseURL()
 
 const googleCredentials =
   process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET

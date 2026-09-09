@@ -31,6 +31,31 @@ they should never be restored uninvited.
 
 ## 0.2.0 - 2026-09-09
 
+### Sign-in works in a Codespace
+
+**What changed.** Signing in from a Codespace failed with `Invalid origin` in
+the dev server's output, and nothing happening in the browser. The app worked
+out its own address in `next.config.ts` using Next's `env` option, which only
+inlines values into the browser bundle - so the server, which is what checks
+the origin, never saw it and fell back to `localhost:3000` or the deployed
+address instead.
+
+Working out the address now lives in `src/lib/base-url.ts` and is read at
+runtime. It also puts a Codespace ahead of the Vercel variables, which
+matters because `vercel env pull` writes those into your `.env.local` - so a
+Codespace has both, and the Codespace one is the address you are looking at.
+
+**Files.** `src/lib/base-url.ts` (new), `src/lib/auth.ts`, `next.config.ts`,
+`docs/when-it-goes-wrong.md`.
+
+**Applying it.** Worth taking if you ever work in a Codespace; harmless
+otherwise, since it resolves to the same address it did before on a laptop or
+once deployed.
+
+Copies across as-is unless you have changed how `baseURL` is worked out in
+`auth.ts`, in which case take the ordering - `BETTER_AUTH_URL`, then
+Codespace, then Vercel, then localhost - rather than the file.
+
 ### One way in, and setup checks everything before it builds anything
 
 **What changed.** There were two ways to start - the template, or `npx degit`
