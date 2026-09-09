@@ -54,7 +54,7 @@ both is normal.
 |---|---|---|
 | **Emailed link** (default) | Desktop, fewest steps, nothing to type | Opens in the wrong browser on phones |
 | **Emailed code** | Phones, feels familiar | An extra screen, expires fast |
-| **Google** | People who have a Google account, no email round trip | Ten fiddly minutes of setup at Google |
+| **Google** | People who have a Google account, no email round trip | Twenty fiddly minutes of setup at Google, once |
 
 You can offer all three. Most apps end up with a social button and one email
 method, and that is a reasonable place to land.
