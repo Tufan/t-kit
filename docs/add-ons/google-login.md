@@ -2,22 +2,86 @@
 
 Instead of (or as well as) the emailed link.
 
-## 1. Get credentials from Google
+This is the fiddliest add-on, and almost all of it is Google's paperwork
+rather than your app. Twenty minutes the first time. The good news is that
+most of it is one-off: see [Reusing this for your next
+app](#reusing-this-for-your-next-app) at the end.
 
-1. Go to [console.cloud.google.com](https://console.cloud.google.com)
-2. Create a project (any name)
-3. **APIs & Services → Credentials → Create Credentials → OAuth client ID**
-4. Application type: **Web application**
-5. Under **Authorised redirect URIs**, add both:
-   - `http://localhost:3000/api/auth/callback/google`
-   - `https://YOUR-APP.vercel.app/api/auth/callback/google`
+## 1. Set up the consent screen
 
-   (Replace `YOUR-APP` with your actual address.)
-6. Copy the **Client ID** and **Client secret**
+The screen people see when they click your Google button - your app's name,
+and what it is asking for. Google will not let you create credentials until
+this exists, so it comes first.
 
-This bit is fiddly and takes about ten minutes. It's the worst part.
+1. Go to [console.cloud.google.com](https://console.cloud.google.com) and sign
+   in. A personal Gmail account is fine.
+2. Create a project. Name it after **you**, not this app - `ross-apps` rather
+   than `meal-planner`. You can use the same one for everything you build.
+3. Find **Google Auth Platform** in the left-hand menu (older guides call it
+   *OAuth consent screen* - same thing) and start the setup.
+4. **User type: External.** If you are on a personal Gmail account this is
+   the only option, and it is the right one. *Internal* appears only for paid
+   Google Workspace accounts.
+5. Fill in the app name and your email address where asked. The app name is
+   what people will see, so use something they will recognise.
+6. **Scopes: leave them alone.** The kit only needs the three basic ones -
+   `email`, `profile` and `openid` - and it asks Google for those itself,
+   every time someone signs in. Adding anything else here - Gmail, Drive,
+   Calendar - puts your app into Google's review queue, which takes weeks.
 
-## 2. Add them to your project
+### Then publish it
+
+Your app starts in **Testing** mode. Find the **Publish app** button and
+press it.
+
+This matters more than it looks:
+
+- In Testing, **only email addresses you have explicitly listed can sign in**.
+  Everyone else gets "app has not completed the verification process", which
+  reads like a security warning and will put people off.
+- In Testing, **sign-ins expire after seven days**. Users get silently logged
+  out and you spend an afternoon looking for a bug in your code that is not
+  there.
+
+Because you only asked for the three basic scopes, publishing takes effect
+immediately. There is no review and nothing to wait for. If Google asks you
+to submit for verification, you have asked for a scope you did not need - go
+back and remove it.
+
+## 2. Get credentials
+
+1. **APIs & Services → Credentials → Create Credentials → OAuth client ID**
+2. Application type: **Web application**
+3. Under **Authorised redirect URIs**, add the addresses your app runs at,
+   with `/api/auth/callback/google` on the end of each. Which ones you need
+   depends on where you work - see the next section.
+4. Copy the **Client ID** and **Client secret**.
+
+You can come back and add more URIs later. Changes take effect within a
+minute or two.
+
+### Which addresses to add
+
+**Your live app** - always. The stable one, so
+`https://your-project.vercel.app/api/auth/callback/google`.
+
+Vercel also generates a fresh URL for every single deployment. Do not use one
+of those: it changes on every push and will stop working immediately.
+
+**Working in a Codespace** - your app is not on `localhost`, it is on a
+machine in a data centre. Click the **PORTS** tab next to the terminal, find
+port 3000, and click the globe icon to see the real address. It looks like
+`https://something-3000.app.github.dev`. Add that with the callback path on
+the end.
+
+While you are in the PORTS tab, right-click port 3000 and set **Port
+Visibility** to **Public**. It is private by default, which means Google's
+redirect back into your app hits a GitHub login page instead.
+
+**Working on your own machine** - add
+`http://localhost:3000/api/auth/callback/google`.
+
+## 3. Add them to your project
 
 ```bash
 npx vercel env add GOOGLE_CLIENT_ID
@@ -25,10 +89,62 @@ npx vercel env add GOOGLE_CLIENT_SECRET
 npx vercel env pull .env.local
 ```
 
-## 3. Turn it on
+### In a Codespace, one more line
+
+The kit assumes it is running at `localhost:3000` unless told otherwise, so
+in a Codespace it will send people to an address that does not exist. Add
+your Codespace's address to `.env.local`:
+
+```bash
+BETTER_AUTH_URL=https://something-3000.app.github.dev
+```
+
+No trailing slash, and no `/api/auth/...` on the end - just the address
+itself. It has to match what you gave Google, exactly.
+
+Your Codespace's name changes if you ever delete it and make a new one. When
+that happens, update both this line and the URI in Google.
+
+## 4. Turn it on
 
 In `src/lib/auth.ts`, uncomment the `socialProviders` block near the bottom.
 
 Then ask your AI assistant:
 
 > "Add a 'Sign in with Google' button to the login page."
+
+Restart `npm run dev` afterwards - changes to `.env.local` are only read when
+the server starts.
+
+## When it does not work
+
+**`redirect_uri_mismatch`** - the commonest one by far, and it means exactly
+what it says. The address your app sent does not match anything you gave
+Google. It is compared character by character: `http` vs `https`, a trailing
+slash, the wrong port, `.app.github.dev` from a Codespace you have since
+replaced. Read the error page carefully - Google prints the address it was
+given, so compare that against your list rather than guessing.
+
+**"App has not completed the verification process"** - you are still in
+Testing. Go back and publish it.
+
+**Signed in fine last week, now it will not** - also Testing. Seven days.
+Publish it.
+
+**It sends you to `localhost` from a Codespace** - `BETTER_AUTH_URL` is
+missing from `.env.local`, or the server has not been restarted since you
+added it.
+
+## Reusing this for your next app
+
+You never have to do part 1 again. One Google Cloud project can serve
+everything you build.
+
+For each new app: **Credentials → Create Credentials → OAuth client ID**,
+add that app's redirect URIs, copy the new ID and secret. About a minute,
+because the consent screen is already done and published.
+
+Give each app its own client ID rather than adding every app's URIs to one
+shared client. They then have separate secrets, so leaking one does not
+affect the others, and you can delete an app's credentials when you retire it
+without touching anything else.
