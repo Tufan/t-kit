@@ -14,6 +14,7 @@
 import { neon } from '@neondatabase/serverless'
 import { existsSync, readFileSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
+import { productionUrl } from './site-url.mjs'
 
 if (!process.env.DATABASE_URL) {
   console.error('\n  DATABASE_URL is missing. Run: npx vercel env pull .env.local\n')
@@ -59,7 +60,9 @@ function siteUrl() {
   try {
     if (existsSync('.vercel/project.json')) {
       const { projectName } = JSON.parse(readFileSync('.vercel/project.json', 'utf8'))
-      if (projectName) return `https://${projectName}.vercel.app`
+      // Not `https://<projectName>.vercel.app`: that address may belong to
+      // someone else, in which case Vercel gave your project a different one.
+      if (projectName) return productionUrl(projectName)
     }
   } catch {
     // fall through to local

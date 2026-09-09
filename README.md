@@ -26,11 +26,17 @@ are on the own-machine path. If not, it is a Codespace.
 
 1. Work through the checklist:
    [accounts to create](docs/before-your-session-browser.md).
-2. Open this repository on GitHub and press **Use this template**, then
-   **Open in a codespace**. That gives you your own copy. Wait a couple of
-   minutes.
-3. When it asks whether you trust the authors, say yes.
-4. In the terminal at the bottom, run:
+2. Open this repository on GitHub, press **Use this template** and choose
+   **Create a new repository**. Give it a name and create it under your own
+   account.
+
+   Not **Open in a codespace**, which is the other option on that menu. That
+   gives you a machine but no copy of your own, so there is nowhere to save
+   your work and setup will stop and tell you so.
+3. On your new repository, press **Code**, then **Codespaces**, then
+   **Create codespace on main**. Wait a couple of minutes.
+4. When it asks whether you trust the authors, say yes.
+5. In the terminal at the bottom, run:
 
    ```bash
    npm run setup
