@@ -27,12 +27,23 @@ are on the own-machine path. If not, it is a Codespace.
 1. Work through the checklist:
    [accounts to create](docs/before-your-session-browser.md).
 2. Open this repository on GitHub, press **Use this template** and choose
-   **Create a new repository**. Give it a name and create it under your own
-   account.
+   **Create a new repository**. Give it a name, set it to **Private**, and
+   create it under your own account.
 
    Not **Open in a codespace**, which is the other option on that menu. That
    gives you a machine but no copy of your own, so there is nowhere to save
    your work and setup will stop and tell you so.
+
+   **Private, unless you have a reason.** It changes nothing about how you
+   work - Codespaces, the database and the free hosting are all the same
+   either way, and the app you put on the internet is public regardless.
+   Private only decides who can read your *code*, and sooner or later a real
+   password ends up in there by accident. You can make it public later in two
+   clicks; unsaying a secret is harder.
+
+   **On the name**, see [picking a name](#picking-a-name) below. It is worth
+   thirty seconds now because the repository name is the one setup suggests
+   for everything else.
 3. On your new repository, press **Code**, then **Codespaces**, then
    **Create codespace on main**. Wait a couple of minutes.
 4. When it asks whether you trust the authors, say yes.
@@ -126,17 +137,45 @@ things: approve a sign-in link for Vercel, name your project, and give the
 email address you will sign in with. It prints the address of your live app
 at the end, along with where your code and your project ended up.
 
-**About the name.** It is used in three places - your code on GitHub, your
-project on Vercel, and the address people visit - so setup checks it is free
-in all of them before going ahead. The one that catches people out is the
-address: `.vercel.app` names are shared by everyone using Vercel, so an
-ordinary word is often gone already. Vercel does not refuse it, it just
-quietly gives your project a different address like `carpentry-nine`. Setup
-tells you and offers you another go, which is much easier than changing it
-afterwards.
+See [picking a name](#picking-a-name) for the one question it asks that is
+worth a moment's thought.
 
 If you do not have a repository yet, setup offers to make you one, so your
 work is not left sitting on one machine.
+
+---
+
+## Picking a name
+
+Your project ends up in three places, and life is easier if they share a
+name:
+
+| | |
+|---|---|
+| Your code | `github.com/you/carpentry-takeoff` |
+| Your project on Vercel | `carpentry-takeoff` |
+| The address you give people | `carpentry-takeoff.vercel.app` |
+
+**They are not automatically the same.** Setup suggests your folder name -
+which is your repository name, if you came the Codespace route - so pressing
+Enter keeps all three aligned. Type something different and you will have a
+repository called one thing and an address called another. That works
+perfectly well; it is just harder to remember.
+
+**The address is the one that catches people out.** `.vercel.app` names are
+shared by everyone using Vercel, so an ordinary word like `carpentry` is very
+likely gone. Vercel does not refuse it - it quietly gives your project a
+different address like `carpentry-nine.vercel.app`. Setup checks first and
+offers you another go, which is much easier than changing it afterwards.
+
+**So: two or three words, not one.** `carpentry-takeoff` rather than
+`carpentry`. Something specific to you is both likelier to be free and easier
+to say out loud.
+
+If you are creating the repository first, it is worth a moment there, because
+by the time setup tells you the address is taken you have already named the
+repository. Nothing breaks - but if you would rather they matched, that is
+the point to think about it.
 
 Lost the address? It is on your dashboard at
 [vercel.com](https://vercel.com), under the project name you chose.
