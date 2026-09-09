@@ -13,7 +13,7 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { randomBytes } from 'node:crypto'
 import { createInterface } from 'node:readline/promises'
 import { productionUrl } from './site-url.mjs'
-import { tidyName, ghReady, ghUser, githubNameFree, vercelAddressFree } from './pick-name.mjs'
+import { tidyName, ghReady, ghUser, vercelAddressFree } from './pick-name.mjs'
 
 // ---------------------------------------------------------------- output
 
@@ -90,11 +90,16 @@ function run(cmd, args, extraEnv = {}) {
   if (r.status !== 0) throw new Error(`${cmd} ${args.join(' ')} exited ${r.status}`)
 }
 
-const TOTAL = 8
+const TOTAL = 7
 
-// ---------------------------------------------------------------- 1. node
+// -------------------------------------------------------------- 1. preflight
+//
+// Everything that has to be true before anything is created. Each check that
+// can fail stops here rather than warning, because the alternative is finding
+// out five minutes in with a Vercel project already made and a database
+// already provisioned - half-built and confusing to unpick.
 
-step(1, TOTAL, 'Checking your computer is ready')
+step(1, TOTAL, 'Checking everything is ready')
 
 const major = Number(process.versions.node.split('.')[0])
 if (major < 20) {
@@ -115,9 +120,9 @@ if (!tryRun('git --version')) {
 }
 ok('Git')
 
-// `degit` copies the files without any history, so start one. Everything in
-// the docs about undoing a bad change depends on there being a commit to go
-// back to.
+// Coming from the template there is always a history. This is only for a
+// copy that arrived some other way - everything in the docs about undoing a
+// bad change depends on there being a commit to go back to.
 if (!existsSync('.git')) {
   try {
     execSync('git init -q -b main', { stdio: 'ignore' })
@@ -136,12 +141,12 @@ if (!existsSync('.git')) {
 //
 //   - pointing at the kit itself: you opened a Codespace straight from it
 //     rather than making your own copy, so you cannot save anything
-//   - pointing at your own repository: nothing to do
-//   - no remote at all: your work only exists on this machine, and nobody
-//     finds out until they look
+//   - pointing at your own repository: what we want
+//   - no remote at all: this copy arrived some way other than the template
 //
-// The first is fatal, and Vercel's own error for it ("You need admin or write
-// access") says nothing about the cause, so catch it before anything is made.
+// Both bad states are fatal, and Vercel's own error for the first ("You need
+// admin or write access") says nothing about the cause, so catch them here
+// before anything is created.
 const originUrl = tryRun('git remote get-url origin')
 
 if (originUrl && /[:/]tufan\/t-kit(\.git)?$/i.test(originUrl)) {
@@ -150,27 +155,47 @@ if (originUrl && /[:/]tufan\/t-kit(\.git)?$/i.test(originUrl)) {
     'Your project is pointing at the original t-kit repository, which you\n' +
     '  cannot save your work to. That happens if you opened a Codespace\n' +
     '  straight from the kit instead of making your own copy of it first.',
-    'The quickest fix, which keeps everything you have done so far:\n' +
-    '    git remote remove origin\n' +
-    '  then run `npm run setup` again - it will offer to make you a\n' +
-    '  repository of your own.\n\n' +
-    '  Starting from scratch instead? Open https://github.com/tufan/t-kit,\n' +
-    '  press "Use this template" and choose "Create a new repository", then\n' +
-    '  press "Code" on your new repository to make a Codespace there.'
+    'Open https://github.com/tufan/t-kit, press "Use this template" and\n' +
+    '  choose "Create a new repository". Then press "Code" on your new\n' +
+    '  repository to make a Codespace there, and run `npm run setup`.\n\n' +
+    '  Work you have already done here can be copied across afterwards -\n' +
+    '  ask Claude to help if there is any.'
   )
 }
 
-// Offer to create one later, once there is a name to give it.
-const needRepo = !originUrl
-if (needRepo) {
-  info('No repository yet - I will offer to make you one')
-} else {
-  ok(`Saving your work to ${originUrl.replace(/^.*[:/]([^/]+\/[^/]+?)(\.git)?$/, '$1')}`)
+// No remote at all means they did not come from the template. There is no
+// good way to guess what they wanted, and carrying on would build a project
+// whose code lives nowhere - so stop while nothing has been created.
+if (!originUrl) {
+  stop(
+    'This copy is not connected to a repository of your own',
+    'Your work would only exist on this machine, and setup would have\n' +
+    '  nowhere to deploy from.',
+    'Start from the template, which makes you a repository as part of\n' +
+    '  creating your copy:\n\n' +
+    '    https://github.com/tufan/t-kit\n\n' +
+    '  Press "Use this template", choose "Create a new repository", then\n' +
+    '  either open a Codespace on it or clone it to your machine.\n\n' +
+    '  Already have a repository for this? Connect it and run setup again:\n' +
+    '    git remote add origin https://github.com/YOU/YOUR-REPO.git'
+  )
 }
 
-// ---------------------------------------------------------------- 2. vercel
+const repoSlug = originUrl.replace(/^.*[:/]([^/]+\/[^/]+?)(\.git)?$/, '$1')
+ok(`Saving your work to ${repoSlug}`)
 
-step(2, TOTAL, 'Checking your Vercel account')
+// Pushing is how the site gets deployed, so being unable to push is not
+// something to discover at the end.
+if (!ghReady()) {
+  stop(
+    'GitHub is not signed in here',
+    'Setup pushes your work to GitHub, and your site deploys from there.',
+    'Run:\n    gh auth login\n\n' +
+    '  Choose GitHub.com, HTTPS, and authenticate in the browser. Then run\n' +
+    '  `npm run setup` again.'
+  )
+}
+ok(`Signed in to GitHub as ${ghUser() ?? 'you'}`)
 
 const hasVercel = tryRun('npx vercel --version')
 if (!hasVercel) {
@@ -219,9 +244,9 @@ if (!who) {
 }
 ok(`Signed in to Vercel as ${who}`)
 
-// ---------------------------------------------------------------- 3. name
+// ---------------------------------------------------------------- 2. name
 
-step(3, TOTAL, 'Naming your project')
+step(2, TOTAL, 'Naming your project')
 
 let projectName
 if (existsSync('.vercel/project.json')) {
@@ -238,62 +263,60 @@ if (existsSync('.vercel/project.json')) {
   }
   ok(`Already linked to "${projectName}"`)
 } else {
-  info('One name is used in three places: your code on GitHub, your project')
-  info('on Vercel, and the address people visit. They are much easier to live')
-  info('with when they match, so we check the name is free everywhere first.')
-  say()
-  info('If you already have this project on Vercel, give it the same name')
-  info('and this will reconnect to it rather than making a second one.')
-  say()
+  // The repository is already named, and having your code, your project and
+  // your address share a name is worth more than another naming decision. So
+  // take it rather than asking again.
+  projectName = tidyName(repoSlug.split('/').pop())
 
-  const rl = createInterface({ input: process.stdin, output: process.stdout })
-  let suggested = tidyName(process.cwd().split(/[\\/]/).pop())
-
-  // Keep asking until the name is clear, or until they decide to keep one
-  // that is not. Checking now is cheap; changing it afterwards means a new
-  // repository, a new project and a new address.
-  for (;;) {
-    const answer = (await rl.question(`  Project name [${suggested}]: `)).trim()
-    projectName = tidyName(answer || suggested)
-
-    if (!projectName) {
-      warn('That name has no letters or numbers in it. Try another.')
-      continue
-    }
-
-    info('Checking that name is free...')
-
-    // Only a name they already own is a problem: it would either merge with
-    // an existing project or fail outright.
-    const ghFree = needRepo ? githubNameFree(projectName) : true
-    const addressFree = await vercelAddressFree(projectName)
-
-    const clashes = []
-    if (ghFree === false) clashes.push('you already have a repository called this')
-    if (addressFree === false) clashes.push(`${projectName}.vercel.app is taken by someone else`)
-
-    if (!clashes.length) {
-      ok(`"${projectName}" is free`)
-      break
-    }
-
-    say()
-    for (const clash of clashes) warn(clash)
-    if (addressFree === false) {
-      info('Vercel would still make your project, but give it a different')
-      info(`address - something like ${projectName}-nine.vercel.app, which is`)
-      info('harder to remember and not one you chose.')
-    }
-    say()
-
-    const retry = (await rl.question('  Try a different name? [Y/n]: ')).trim().toLowerCase()
-    if (retry === 'n' || retry === 'no') {
-      warn(`Carrying on with "${projectName}".`)
-      break
-    }
-    suggested = projectName
+  if (!projectName) {
+    stop(
+      "Couldn't work out a project name from your repository",
+      `Your repository is "${repoSlug}", which has no letters or numbers in\n` +
+      '  the part after the slash.',
+      'Rename the repository on GitHub to something plainer, then run\n' +
+      '  `npm run setup` again.'
+    )
   }
-  rl.close()
+
+  ok(`Using "${projectName}", the name of your repository`)
+
+  // The one thing still worth checking: .vercel.app addresses are shared by
+  // everyone using Vercel. Vercel does not refuse a taken one, it quietly
+  // deploys you to a different address - so say so now rather than letting
+  // them find a name they did not choose at the end.
+  info('Checking the address is free...')
+  const addressFree = await vercelAddressFree(projectName)
+
+  if (addressFree === false) {
+    say()
+    warn(`${projectName}.vercel.app is already taken by someone else`)
+    info('Your app will still work. Vercel will give it a different address')
+    info(`- something like ${projectName}-nine.vercel.app - which is harder`)
+    info('to remember and not one you chose.')
+    say()
+    info('To get the address you want, rename your repository on GitHub to')
+    info('something more specific and run `npm run setup` again. Two or three')
+    info('words is usually enough.')
+    say()
+
+    const rl = createInterface({ input: process.stdin, output: process.stdout })
+    const carryOn = (await rl.question('  Carry on with this name anyway? [y/N]: '))
+      .trim().toLowerCase()
+    rl.close()
+
+    if (carryOn !== 'y' && carryOn !== 'yes') {
+      stop(
+        'Stopped so you can rename your repository',
+        'Nothing has been created yet.',
+        'Rename it on GitHub (Settings, then the name at the top), then in\n' +
+        '  your terminal:\n\n' +
+        '    git remote set-url origin https://github.com/YOU/NEW-NAME.git\n\n' +
+        '  and run `npm run setup` again.'
+      )
+    }
+  } else if (addressFree === true) {
+    ok(`${projectName}.vercel.app is free`)
+  }
 
   // Links to the project if it already exists, creates it if not - so this
   // is also how a second machine reconnects to a project you already have.
@@ -316,35 +339,9 @@ if (existsSync('.vercel/project.json')) {
   ok(existed ? `Connected to "${projectName}"` : `Created "${projectName}"`)
 }
 
-// Somewhere for the work to live. Outside the block above on purpose: someone
-// who ran setup before this existed already has a Vercel project and no
-// repository, and re-running is how they get offered one.
-if (needRepo) {
-  if (!ghReady()) {
-    warn('Cannot make you a repository here - the `gh` command is not signed')
-    warn('in - so your work will only exist on this machine.')
-    info('Setup will carry on. To fix it afterwards, create an empty')
-    info('repository on github.com and run:')
-    info(`  git remote add origin https://github.com/YOU/${projectName}.git`)
-    info('  git push -u origin main')
-    say()
-  } else {
-    info(`Creating github.com/${ghUser() ?? 'you'}/${projectName}...`)
-    try {
-      run('gh', ['repo', 'create', projectName,
-                 '--private', '--source=.', '--remote=origin', '--push'])
-      ok(`Your work is saved to "${projectName}" on GitHub`)
-    } catch {
-      warn('Could not create the repository - carrying on without one.')
-      warn('Your work will only exist on this machine until you make one.')
-      say()
-    }
-  }
-}
+// ---------------------------------------------------------------- 3. db
 
-// ---------------------------------------------------------------- 4. db
-
-step(4, TOTAL, 'Creating your database')
+step(3, TOTAL, 'Creating your database')
 
 const envFile = '.env.local'
 const envHas = (key) =>
@@ -370,9 +367,9 @@ if (envHas('DATABASE_URL')) {
   ok('Database created and connected')
 }
 
-// ---------------------------------------------------------------- 5. env
+// ---------------------------------------------------------------- 4. env
 
-step(5, TOTAL, 'Setting up sign-in for your app')
+step(4, TOTAL, 'Setting up sign-in for your app')
 
 if (!envHas('BETTER_AUTH_SECRET')) {
   const secret = randomBytes(32).toString('base64url')
@@ -427,9 +424,9 @@ if (!envHas('DATABASE_URL')) {
 }
 ok('Settings saved')
 
-// ---------------------------------------------------------------- 6. schema
+// ---------------------------------------------------------------- 5. schema
 
-step(6, TOTAL, 'Creating your tables')
+step(5, TOTAL, 'Creating your tables')
 
 try {
   // drizzle-kit does not read .env.local on its own, so load it here.
@@ -444,9 +441,9 @@ try {
 }
 ok('Tables created')
 
-// ---------------------------------------------------------------- 7. seed
+// ---------------------------------------------------------------- 6. seed
 
-step(7, TOTAL, 'Adding example data')
+step(6, TOTAL, 'Adding example data')
 
 // The examples only show up for the person they belong to, so ask who that
 // is. Use the address you will sign in with.
@@ -465,9 +462,9 @@ try {
   warn('Could not add example data - not fatal, your app will just start empty')
 }
 
-// ---------------------------------------------------------------- 8. deploy
+// ---------------------------------------------------------------- 7. deploy
 
-step(8, TOTAL, 'Putting your app on the internet')
+step(7, TOTAL, 'Putting your app on the internet')
 
 info('This takes a minute or two the first time...')
 let url

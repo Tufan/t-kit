@@ -9,115 +9,111 @@ and deployed.
 
 ## Getting started
 
-Two ways to work.
+**Everyone starts the same way: make your own copy from this template.** That
+gives you a repository of your own, which is where your code lives and where
+your site deploys from. Setup will not run without one.
+
+After that, choose where you work:
 
 - **In a browser (a Codespace).** Nothing to install. Works on a locked-down
-  work laptop or an old machine.
-- **On your own machine.** Faster, works offline, needs Node.js 20 or newer.
-
-Not sure which you did? If there is a project folder on your computer, you
-are on the own-machine path. If not, it is a Codespace.
+  work laptop or an old machine. The easier start, and what these
+  instructions assume.
+- **On your own machine.** Faster and works offline, but you install the
+  tools yourself.
 
 ---
 
-## In a browser (a Codespace)
+## First time
 
-### First time
+### 1. Accounts
 
-1. Work through the checklist:
-   [accounts to create](docs/before-your-session-browser.md).
-2. Open this repository on GitHub, press **Use this template** and choose
-   **Create a new repository**. Give it a name, set it to **Private**, and
-   create it under your own account.
+Work through the checklist:
+[in a browser](docs/before-your-session-browser.md) ·
+[Windows](docs/before-your-session.md) ·
+[Mac](docs/before-your-session-mac.md)
 
-   Not **Open in a codespace**, which is the other option on that menu. That
-   gives you a machine but no copy of your own, so there is nowhere to save
-   your work and setup will stop and tell you so.
+### 2. Make your copy
 
-   Three things on that form are worth a moment:
+Open this repository on GitHub, press **Use this template** and choose
+**Create a new repository**. Give it a name, set it to **Private**, and
+create it under your own account.
 
-   **Leave "Include all branches" off.** It is off by default and should stay
-   that way. On, you get every branch of the kit that happened to exist the
-   day you pressed the button - unfinished work in the middle of being
-   written, which is nothing to do with your app and only confusing to find
-   later. You want `main`, which is what off gives you.
+Not **Open in a codespace**, which is the other option on that menu. That
+gives you a machine but no copy of your own, so there is nowhere to save your
+work and setup will stop and tell you so.
 
-   **Set visibility to Private.** It starts on *Public*, so this is one you
-   have to change. It costs you nothing: Codespaces, the database and the
-   free hosting are identical either way, and the app you put on the internet
-   is public regardless. Private only decides who can read your *code* - and
-   sooner or later a real password ends up in there by accident. You can make
-   it public later in two clicks; unsaying a secret is harder.
+Three things on that form are worth a moment:
 
-   **The name** is worth thirty seconds, because it is the one setup suggests
-   for everything else - see [picking a name](#picking-a-name) below.
-3. On your new repository, press **Code**, then **Codespaces**, then
-   **Create codespace on main**. Wait a couple of minutes.
-4. When it asks whether you trust the authors, say yes.
-5. In the terminal at the bottom, run:
+**Leave "Include all branches" off.** It is off by default and should stay
+that way. On, you get every branch of the kit that happened to exist the day
+you pressed the button - unfinished work in the middle of being written,
+which is nothing to do with your app and only confusing to find later. You
+want `main`, which is what off gives you.
 
-   ```bash
-   npm run setup
-   ```
+**Set visibility to Private.** It starts on *Public*, so this is one you have
+to change. It costs you nothing: Codespaces, the database and the free
+hosting are identical either way, and the app you put on the internet is
+public regardless. Private only decides who can read your *code* - and sooner
+or later a real password ends up in there by accident. You can make it public
+later in two clicks; unsaying a secret is harder.
 
-   See [what setup does](#what-setup-does) below.
+**The name matters more than it looks** - it becomes your project's name and
+its address too. See [picking a name](#picking-a-name).
 
-### Coming back to it
+### 3. Open it
 
-1. **Resume it.** [github.com/codespaces](https://github.com/codespaces) and
-   open yours. It stops itself when you are not using it; your work is still
-   there. A few seconds to come back.
+**In a browser:** on your new repository press **Code**, then **Codespaces**,
+then **Create codespace on main**. Wait a couple of minutes, and say yes when
+it asks whether you trust the authors.
 
-   **Not listed any more?** GitHub deletes Codespaces left unused for 30
-   days. Anything you pushed is safe on GitHub: open your repository, create
-   a new Codespace, and run `npm run setup` again with the same project name.
-2. **Start the app:** `npm run dev`
-3. **Open it.** Click the **PORTS** tab next to the terminal, find port 3000,
-   click the globe icon.
+**On your own machine:** press **Code**, copy the HTTPS address, and in a
+terminal:
 
-   **`localhost:3000` will not work.** The app is running on a machine in a
-   data centre, not on your laptop.
-4. **Sign in.** Enter your email and press **Email me a link**. Then, in a
+```bash
+git clone https://github.com/YOU/YOUR-REPO.git
+cd YOUR-REPO
+npm install
+```
+
+### 4. Run setup
+
+In the terminal:
+
+```bash
+npm run setup
+```
+
+See [what setup does](#what-setup-does) below.
+
+---
+
+## Coming back to it
+
+**In a browser.** [github.com/codespaces](https://github.com/codespaces) and
+open yours. It stops itself when you are not using it; your work is still
+there. A few seconds to come back.
+
+*Not listed any more?* GitHub deletes Codespaces left unused for 30 days.
+Anything you pushed is safe: open your repository and create a new Codespace.
+Your project is already set up, so there is nothing to run again.
+
+**On your own machine.** Open your project folder in VS Code - **File**,
+**Open Folder** - and `git pull` if you have worked elsewhere since.
+
+Then, either way:
+
+1. **Start the app:** `npm run dev`
+2. **Open it.** In a browser, click the **PORTS** tab next to the terminal,
+   find port 3000 and click the globe icon - `localhost:3000` will not work,
+   because the app is running on a machine in a data centre. On your own
+   machine it is [localhost:3000](http://localhost:3000).
+3. **Sign in.** Enter your email and press **Email me a link**. Then, in a
    *second* terminal, run `npm run signin-link` and paste the link it prints
    into your browser.
-5. **Ask for what you want.** The Claude icon in the left-hand bar. Not the
+4. **Ask for what you want.** The Claude icon in the left-hand bar. Not the
    Copilot chat on the right, if you have one. A good first question after a
    break: *what does this app do so far, and what was the last thing
    changed?*
-
----
-
-## On your own machine
-
-### First time
-
-1. Work through the checklist - accounts, and things to install:
-   [Windows](docs/before-your-session.md) ·
-   [Mac](docs/before-your-session-mac.md)
-2. Open VS Code, then **Terminal** menu, **New Terminal**. Three commands,
-   where `my-app` is whatever you want your project folder called:
-
-   ```bash
-   npx degit tufan/t-kit my-app && cd my-app
-   npm install
-   npm run setup
-   ```
-
-   See [what setup does](#what-setup-does) below.
-
-### Coming back to it
-
-1. **Open your project folder** in VS Code - **File**, **Open Folder**. It is
-   the one you named when you set up.
-2. **Start the app.** **Terminal** menu, **New Terminal**, then:
-   `npm run dev`
-3. **Open it:** [localhost:3000](http://localhost:3000)
-4. **Sign in.** Enter your email and press **Email me a link**. Then, in a
-   *second* terminal, run `npm run signin-link` and paste the link it prints
-   into your browser.
-5. **Ask for what you want.** The Claude icon in the left-hand bar. A good
-   first question after a break: *what does this app do so far, and what was
-   the last thing changed?*
 
 ---
 
@@ -139,16 +135,20 @@ paste the error into Claude and ask what it means.
 ## What setup does
 
 `npm run setup` signs you into Vercel, creates your project and your
-database, and puts it on the internet. About six minutes. It asks you three
-things: approve a sign-in link for Vercel, name your project, and give the
-email address you will sign in with. It prints the address of your live app
-at the end, along with where your code and your project ended up.
+database, and puts it on the internet. About six minutes. It asks you two
+things: approve a sign-in link for Vercel, and the email address you will
+sign in with. It prints the address of your live app at the end, along with
+where your code and your project ended up.
 
-See [picking a name](#picking-a-name) for the one question it asks that is
-worth a moment's thought.
+**It checks everything before it creates anything.** Node, Git, that you are
+signed in to GitHub and Vercel, and that your app's address is free. If
+something is missing it stops and tells you what to do, with nothing
+half-made to unpick. So a failure at that first step costs you nothing but
+the time to fix it and run setup again.
 
-If you do not have a repository yet, setup offers to make you one, so your
-work is not left sitting on one machine.
+**Your project takes its name from your repository**, so your code, your
+project and your address all match without your having to keep them in step.
+See [picking a name](#picking-a-name).
 
 ---
 
@@ -163,26 +163,31 @@ name:
 | Your project on Vercel | `carpentry-takeoff` |
 | The address you give people | `carpentry-takeoff.vercel.app` |
 
-**They are not automatically the same.** Setup suggests your folder name -
-which is your repository name, if you came the Codespace route - so pressing
-Enter keeps all three aligned. Type something different and you will have a
-repository called one thing and an address called another. That works
-perfectly well; it is just harder to remember.
+**All three come from the name you give your repository**, so they stay in
+step on their own. That is also why it is worth a moment's thought: it is the
+only naming decision you make.
 
-**The address is the one that catches people out.** `.vercel.app` names are
+**The address is the part that catches people out.** `.vercel.app` names are
 shared by everyone using Vercel, so an ordinary word like `carpentry` is very
-likely gone. Vercel does not refuse it - it quietly gives your project a
-different address like `carpentry-nine.vercel.app`. Setup checks first and
-offers you another go, which is much easier than changing it afterwards.
+likely gone. Vercel does not refuse a taken name - it quietly gives your
+project a different address like `carpentry-nine.vercel.app`, which is not
+one you chose and hard to remember.
+
+Setup checks before it creates anything, and if the address is taken it stops
+and offers to let you rename. That is easy at that point and fiddly later, so
+take the offer.
 
 **So: two or three words, not one.** `carpentry-takeoff` rather than
 `carpentry`. Something specific to you is both likelier to be free and easier
 to say out loud.
 
-If you are creating the repository first, it is worth a moment there, because
-by the time setup tells you the address is taken you have already named the
-repository. Nothing breaks - but if you would rather they matched, that is
-the point to think about it.
+Changed your mind afterwards? Rename the repository on GitHub, then point
+your copy at the new name and run setup again:
+
+```bash
+git remote set-url origin https://github.com/YOU/NEW-NAME.git
+npm run setup
+```
 
 Lost the address? It is on your dashboard at
 [vercel.com](https://vercel.com), under the project name you chose.
@@ -193,20 +198,22 @@ Everything it creates is on your own accounts.
 
 ## Working on two machines
 
-Only if your project is on GitHub. Setup tells you at the end whether it is -
-look for the "Your code" line. If it says your work only exists on this
-machine, ask Claude to put your project on GitHub first.
-
-Then, on the second machine, ask Claude to fetch your project from GitHub,
-and run:
+Your project is already on GitHub, so this is just a clone. On the second
+machine:
 
 ```bash
+git clone https://github.com/YOU/YOUR-REPO.git
+cd YOUR-REPO
+npm install
 npm run setup
 ```
 
-**Give it the same project name as the first time.** It reconnects to your
-existing project rather than creating a second one, so both machines share
-the same database and the same live site.
+Setup reconnects to the project you already have rather than making a second
+one - it recognises it by your repository's name - so both machines share the
+same database and the same live site.
+
+A Codespace counts as a machine, so this is also how you work in the browser
+sometimes and locally at others.
 
 After that: `git push` before you switch, `git pull` when you arrive.
 

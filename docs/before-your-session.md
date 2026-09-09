@@ -53,6 +53,21 @@ The editor. You won't be typing much code in it, but it's where the AI works.
 Open VS Code → Extensions (the squares icon in the left bar) → search
 "Claude Code" → Install. Sign in with your Claude account.
 
+### GitHub CLI
+[cli.github.com](https://cli.github.com) → download and install, taking all
+the defaults.
+
+This is how your computer talks to GitHub. Once it's installed, open a
+terminal and run:
+
+```
+gh auth login
+```
+
+Answer **GitHub.com**, then **HTTPS**, then **Login with a web browser**. It
+gives you a code, opens GitHub, and you paste the code in. Setup will not run
+until this is done.
+
 ---
 
 ## 3. The one check that matters
@@ -61,19 +76,22 @@ Open a terminal:
 - **Windows:** Start menu → type "PowerShell" → open it
 - **Mac:** Cmd+Space → type "Terminal" → open it
 
-Type these two lines, pressing Enter after each:
+Type these three lines, pressing Enter after each:
 
 ```
 node --version
 git --version
+gh auth status
 ```
 
-You should get two version numbers, something like `v22.14.0` and
-`git version 2.45.1`. The exact numbers don't matter.
+The first two should give version numbers, something like `v22.14.0` and
+`git version 2.45.1`. The exact numbers don't matter. The third should say
+you're logged in to github.com.
 
-**If either one says "not recognised" or "command not found", send me a
-screenshot.** This is the single most common thing that goes wrong, and it's
-much easier to fix before the session than during it.
+**If any of them says "not recognised", "command not found", or that you're
+not logged in, send me a screenshot.** This is the single most common thing
+that goes wrong, and it's much easier to fix before the session than during
+it.
 
 *(On Windows, Git usually arrives with VS Code. If it didn't, grab it from
 [git-scm.com](https://git-scm.com) and take all the defaults.)*

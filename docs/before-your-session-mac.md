@@ -89,24 +89,41 @@ seconds and is annoying to diagnose later if you skip it.
 Open VS Code → Extensions (the squares icon in the left bar) → search
 "Claude Code" → Install. Sign in with your Claude account.
 
+### GitHub CLI
+[cli.github.com](https://cli.github.com) → download and install, taking all
+the defaults.
+
+This is how your Mac talks to GitHub. Once it's installed, open Terminal and
+run:
+
+```
+gh auth login
+```
+
+Answer **GitHub.com**, then **HTTPS**, then **Login with a web browser**. It
+gives you a code, opens GitHub, and you paste the code in. Setup will not run
+until this is done.
+
 ---
 
 ## 3. The one check that matters
 
-Open Terminal (**Cmd+Space** → "Terminal") and type these two lines, pressing
-Enter after each:
+Open Terminal (**Cmd+Space** → "Terminal") and type these three lines,
+pressing Enter after each:
 
 ```
 node --version
 git --version
+gh auth status
 ```
 
-You should get two version numbers, something like `v22.14.0` and
-`git version 2.39.5`. The exact numbers don't matter.
+The first two should give version numbers, something like `v22.14.0` and
+`git version 2.39.5`. The exact numbers don't matter. The third should say
+you're logged in to github.com.
 
-**If either one says "command not found", send me a screenshot.** This is the
-single most common thing that goes wrong, and it's much easier to fix before
-the session than during it.
+**If any of them says "command not found" or that you're not logged in, send
+me a screenshot.** This is the single most common thing that goes wrong, and
+it's much easier to fix before the session than during it.
 
 ---
 
