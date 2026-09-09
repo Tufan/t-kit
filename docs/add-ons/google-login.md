@@ -123,6 +123,33 @@ npx vercel env add GOOGLE_CLIENT_SECRET
 npx vercel env pull .env.local
 ```
 
+### "Is this a sensitive value?"
+
+`vercel env add` asks. Both answers are defensible, so pick knowingly.
+
+**No** - `vercel env pull` can fetch the value back, so it lands in
+`.env.local` and Google sign-in works when you run the app on your own
+machine. Easier, and reasonable here: the secret is always visible again in
+the Google console, and you can replace it there in seconds.
+
+**Yes** - Vercel will never hand the value back to anyone, including you.
+Your deployed app still works, but nothing can pull it down, so you have to
+paste it into `.env.local` yourself. Better protection, more friction. Worth
+it once other people are using your app.
+
+If you said yes and Google sign-in works live but not locally, that is why.
+Copy both values from the Google console into `.env.local` by hand.
+
+### `vercel env pull` overwrites that file
+
+Worth knowing before it bites you. `vercel env pull` rewrites `.env.local`
+from scratch, so anything you typed in there yourself disappears - a
+hand-pasted secret, or the `BETTER_AUTH_URL` line below.
+
+Nothing is broken when this happens, and nothing is lost that you cannot put
+back. But if sign-in suddenly stops working locally and the last thing you
+did was pull, look in that file first.
+
 ### In a Codespace, one more line
 
 The kit assumes it is running at `localhost:3000` unless told otherwise, so
@@ -176,6 +203,11 @@ Publish it.
 **It sends you to `localhost` from a Codespace** - `BETTER_AUTH_URL` is
 missing from `.env.local`, or the server has not been restarted since you
 added it.
+
+**Works live, but the button is missing when you run it yourself** - the two
+values are on Vercel but not on your machine. Either you marked them
+sensitive, so `vercel env pull` cannot fetch them, or a later pull wiped the
+lines you pasted. Copy them from the Google console into `.env.local` again.
 
 ## Reusing this for your next app
 
