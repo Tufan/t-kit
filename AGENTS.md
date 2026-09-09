@@ -82,6 +82,35 @@ exist so the person can see working code and click around a real thing.
   pattern into a new top-level folder instead, so removing the examples
   doesn't take their work with it.
 
+## If they ask about updates from the kit
+
+This project was created from t-kit. It has no connection back to it - no
+upstream remote, no shared history - and there is deliberately no update
+command. If they ask whether there is anything new worth having:
+
+1. Read the `version` in `package.json`. That is the kit version they started
+   from.
+2. Fetch the kit's changelog:
+   `https://raw.githubusercontent.com/tufan/t-kit/main/CHANGELOG.md`
+3. Tell them what has landed since their version, in plain terms - what each
+   change is and whether it is worth it *for this app*. A change to something
+   they do not use is not worth their time.
+4. Apply only what they pick.
+
+**Never copy a file across wholesale.** Take what the change is *doing* and
+fit it to what the file has become here. This app has moved on from the kit;
+that is the entire point of it.
+
+**Never restore something they deleted.** No examples, no docs, no add-ons
+they removed. If a changelog entry only touches files that are not here any
+more, skip it and say so.
+
+**If a change collides with something they have customised**, say so and
+describe the choice, rather than picking for them.
+
+When they have applied everything they want, update `version` in
+`package.json` to match, so the next check starts from the right place.
+
 ## Commands
 
 ```bash

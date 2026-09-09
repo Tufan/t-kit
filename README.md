@@ -233,6 +233,9 @@ components in `src/components/ui`.
 - [docs/add-ons/](docs/add-ons/) - what the kit does not do out of the box:
   real emails, your own domain, file uploads, payments, better-looking
   components.
+- [docs/updating.md](docs/updating.md) - the kit keeps improving; your app
+  does not change when it does. How to see what is new and take only the bits
+  you want.
 
 ---
 
