@@ -21,6 +21,13 @@ export const auth = betterAuth({
   baseURL,
   database: drizzleAdapter(db, { provider: 'pg', schema }),
 
+  // GitHub's port forwarding rewrites the browser's Origin header to
+  // localhost:3000 on its way to the app, even though the browser is on the
+  // app.github.dev address. So in a Codespace that address has to be trusted
+  // too, or every sign-in is refused as "Invalid origin". Vercel never sets
+  // CODESPACE_NAME, so this is empty once deployed.
+  trustedOrigins: process.env.CODESPACE_NAME ? ['http://localhost:3000'] : [],
+
   plugins: [
     magicLink({
       sendMagicLink: async ({ email, url }) => {

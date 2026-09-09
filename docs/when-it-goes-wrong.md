@@ -58,17 +58,20 @@ running `npm run dev` shows:
 ERROR [Better Auth]: Invalid origin: http://localhost:3000
 ```
 
-Sign-in checks that the address in your browser is one the app expects, and
-refuses anything else - so the app has the wrong idea of where it is running.
+Sign-in checks that the address a request came from is one the app expects,
+and refuses anything else.
 
-In a Codespace this is worked out for you, so the usual cause is a
-`BETTER_AUTH_URL` line in `.env.local` left over from somewhere else. Either
-delete that line or set it to the address you are actually using, then stop
-`npm run dev` with **Ctrl+C** and start it again. `.env.local` is only read
-when the server starts.
+**In a Codespace the message names `localhost:3000` even though your browser
+bar says `app.github.dev`.** That is not a clue about where you went wrong:
+GitHub's port forwarding rewrites the address on its way to the app, and the
+kit knows to allow for that. So if you see this in a Codespace, the cause is
+almost always a `BETTER_AUTH_URL` line in `.env.local` - `vercel env pull`
+can leave one behind. Delete that line, then stop `npm run dev` with
+**Ctrl+C** and start it again. `.env.local` is only read when the server
+starts.
 
-The address it wants is the one in your browser's bar, with no trailing
-slash and nothing after the domain.
+On your own machine, the app should already expect `localhost:3000`. If it
+does not, the same `BETTER_AUTH_URL` line is the thing to look for.
 
 ---
 
