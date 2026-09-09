@@ -45,6 +45,12 @@ runtime. It also puts a Codespace ahead of the Vercel variables, which
 matters because `vercel env pull` writes those into your `.env.local` - so a
 Codespace has both, and the Codespace one is the address you are looking at.
 
+That alone was not enough. GitHub's port forwarding rewrites the browser's
+`Origin` header to `http://localhost:3000` on its way to the app, so even
+with the address right, every sign-in was refused. `auth.ts` now trusts that
+address too, but only while `CODESPACE_NAME` is set - it never is on Vercel,
+so nothing is loosened once deployed.
+
 **Files.** `src/lib/base-url.ts` (new), `src/lib/auth.ts`, `next.config.ts`,
 `docs/when-it-goes-wrong.md`.
 
