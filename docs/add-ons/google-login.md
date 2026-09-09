@@ -141,14 +141,14 @@ that happens, update both this line and the URI in Google.
 
 ## 4. Turn it on
 
-In `src/lib/auth.ts`, uncomment the `socialProviders` block near the bottom.
-
-Then ask your AI assistant:
-
-> "Add a 'Sign in with Google' button to the login page."
+Nothing to edit. Google sign-in switches itself on when it finds those two
+values, and the login page grows a **Continue with Google** button to match.
 
 Restart `npm run dev` afterwards - changes to `.env.local` are only read when
 the server starts.
+
+If the button does not appear, the app cannot see the two values: check they
+are in `.env.local` and that you restarted the server.
 
 ## When it does not work
 
