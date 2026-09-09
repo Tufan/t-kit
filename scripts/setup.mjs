@@ -522,19 +522,29 @@ say(`  ${c.dim}Your project:${c.reset} vercel.com/dashboard -> ${projectName}`)
 
 // Record it so `npm run signin-link` builds links against the same address.
 // This has to happen after the deploy, because the address does not exist
-// until the project has been deployed at least once. `vercel env pull`
-// rewrites this file, so anything that pulls again will drop the line - and
-// re-running setup puts it back.
-try {
-  const existing = existsSync(envFile) ? readFileSync(envFile, 'utf8') : ''
-  if (!/^BETTER_AUTH_URL=/m.test(existing)) {
-    writeFileSync(
-      envFile,
-      `${existing.replace(/\n*$/, '\n')}\n# The public address of your app.\nBETTER_AUTH_URL=${url}\n`
-    )
+// until the project has been deployed at least once. A later manual
+// `vercel env pull` rewrites this file and drops the line; re-running setup
+// puts it back.
+//
+// Not in a Codespace. BETTER_AUTH_URL overrides everything else the app uses
+// to work out its own address, so writing the live address here would make
+// the app think it is on Vercel while the browser is on app.github.dev - and
+// every sign-in is refused as "Invalid origin". Both signin-link and the app
+// already work out the Codespace address for themselves.
+if (process.env.CODESPACE_NAME) {
+  info('In a Codespace, so not pinning the app to its live address.')
+} else {
+  try {
+    const existing = existsSync(envFile) ? readFileSync(envFile, 'utf8') : ''
+    if (!/^BETTER_AUTH_URL=/m.test(existing)) {
+      writeFileSync(
+        envFile,
+        `${existing.replace(/\n*$/, '\n')}\n# The public address of your app.\nBETTER_AUTH_URL=${url}\n`
+      )
+    }
+  } catch {
+    // Not fatal: signin-link falls back to asking Vercel directly.
   }
-} catch {
-  // Not fatal: signin-link falls back to asking Vercel directly.
 }
 say()
 say(`  ${c.dim}To sign in: open the address above, enter your email, and${c.reset}`)

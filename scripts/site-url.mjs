@@ -3,7 +3,7 @@
  *
  * You would think this is `<project name>.vercel.app`, and usually it is. But
  * `.vercel.app` names are shared by everyone using Vercel, so if you call your
- * project something ordinary - "carpentry", "meals", "money" - that address may
+ * project something ordinary - "rota", "meals", "money" - that address may
  * already belong to a stranger. Vercel still creates your project under the
  * name you chose and quietly gives it a different public address instead.
  *
@@ -26,7 +26,7 @@ function tryRun(cmd, timeout = 20000) {
 }
 
 /**
- * The public address of a project, e.g. https://carpentry-4f2b.vercel.app
+ * The public address of a project, e.g. https://rota-4f2b.vercel.app
  *
  * `vercel alias ls` lists every address pointing at every deployment. The one
  * we want is the shortest that is not tied to a branch or a single deployment:
