@@ -61,6 +61,14 @@ address out for themselves there.
 **Files.** `src/lib/base-url.ts` (new), `src/lib/auth.ts`, `next.config.ts`,
 `scripts/setup.mjs`, `docs/when-it-goes-wrong.md`.
 
+**Applying it.** Worth taking if you ever work in a Codespace; harmless
+otherwise, since it resolves to the same address it did before on a laptop or
+once deployed.
+
+Copies across as-is unless you have changed how `baseURL` is worked out in
+`auth.ts`, in which case take the ordering - `BETTER_AUTH_URL`, then
+Codespace, then Vercel, then localhost - rather than the file.
+
 **If your app was set up from 0.1.0 in a Codespace**, the line is already in
 your `.env.local` and the fixes above will not help until it is gone. Delete
 the `BETTER_AUTH_URL` line and restart `npm run dev`.
@@ -77,14 +85,6 @@ nothing actually moved. Regenerated so the diff does not happen.
 
 **Applying it.** Nothing to do - your own first `npm install` already did
 this for you.
-
-**Applying it.** Worth taking if you ever work in a Codespace; harmless
-otherwise, since it resolves to the same address it did before on a laptop or
-once deployed.
-
-Copies across as-is unless you have changed how `baseURL` is worked out in
-`auth.ts`, in which case take the ordering - `BETTER_AUTH_URL`, then
-Codespace, then Vercel, then localhost - rather than the file.
 
 ### One way in, and setup checks everything before it builds anything
 
