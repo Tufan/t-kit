@@ -14,10 +14,11 @@
  * a different address like carpentry-nine.vercel.app. That is how you end up
  * with a name you did not choose and cannot remember.
  *
- * So check first, and let the person pick again while picking is still cheap.
+ * The name itself comes from the repository, so the only thing to check is
+ * the address - early, while renaming is still cheap.
  */
 
-import { execSync, spawnSync } from 'node:child_process'
+import { execSync } from 'node:child_process'
 
 /** Run a command, capture output, return null instead of throwing. */
 function tryRun(cmd, timeout = 15000) {
@@ -40,19 +41,6 @@ export function tidyName(raw) {
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '')
     .slice(0, 40)
-}
-
-/** Is `gh` installed and signed in? Codespaces have it; laptops may not. */
-export function ghReady() {
-  return spawnSync('gh', ['auth', 'status'], {
-    stdio: 'ignore',
-    shell: process.platform === 'win32',
-  }).status === 0
-}
-
-/** The signed-in GitHub username, or null. */
-export function ghUser() {
-  return tryRun('gh api user --jq .login')
 }
 
 /**
@@ -86,21 +74,4 @@ export async function vercelAddressFree(name) {
   } finally {
     clearTimeout(timer)
   }
-}
-
-/**
- * Does this person already have a repository with this name?
- *
- * Returns true (free), false (taken), or null (could not tell).
- */
-export function githubNameFree(name) {
-  const user = ghUser()
-  if (!user) return null
-  const r = spawnSync(
-    'gh',
-    ['api', `repos/${user}/${name}`, '--silent'],
-    { stdio: 'ignore', shell: process.platform === 'win32' }
-  )
-  // Non-zero means the API could not find it, which is what we want.
-  return r.status !== 0
 }

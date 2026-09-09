@@ -49,10 +49,28 @@ npm run setup
 
 ---
 
-## "GitHub is not signed in here"
+## "Cannot reach [your repository] on GitHub"
 
-Setup stopped at the first step. Your computer has the GitHub CLI but has not
-been told who you are, so it could not push your work.
+Setup stopped at the first step, before creating anything. Either this
+computer cannot sign in to GitHub, or the repository is not where your copy
+thinks it is.
+
+Check the address first:
+
+```bash
+git remote -v
+```
+
+If that is not your repository - because you renamed it, say - point it at
+the right one:
+
+```bash
+git remote set-url origin https://github.com/YOU/YOUR-REPO.git
+```
+
+If the address is right, this computer needs to be able to sign in to
+GitHub. The simplest way is the GitHub CLI from
+[cli.github.com](https://cli.github.com), then:
 
 ```bash
 gh auth login
@@ -61,9 +79,8 @@ gh auth login
 Answer **GitHub.com**, then **HTTPS**, then **Login with a web browser**, and
 paste the code it gives you. Then run `npm run setup` again.
 
-If `gh` itself is not found, install it from
-[cli.github.com](https://cli.github.com) first. In a Codespace it is always
-there and always signed in, so this only comes up on your own machine.
+This does not come up in a Codespace, which can already reach your
+repositories without being told anything.
 
 ---
 
