@@ -19,20 +19,54 @@ this exists, so it comes first.
    than `meal-planner`. You can use the same one for everything you build.
 3. Find **Google Auth Platform** in the left-hand menu (older guides call it
    *OAuth consent screen* - same thing) and start the setup.
-4. **User type: External.** If you are on a personal Gmail account this is
-   the only option, and it is the right one. *Internal* appears only for paid
+4. **Audience: External.** If you are on a personal Gmail account this is the
+   only option, and it is the right one. *Internal* appears only for paid
    Google Workspace accounts.
-5. Fill in the app name and your email address where asked. The app name is
-   what people will see, so use something they will recognise.
-6. **Scopes: leave them alone.** The kit only needs the three basic ones -
-   `email`, `profile` and `openid` - and it asks Google for those itself,
-   every time someone signs in. Adding anything else here - Gmail, Drive,
-   Calendar - puts your app into Google's review queue, which takes weeks.
+5. Fill in the app name and your email address. The app name is what people
+   will see on the sign-in screen, so use something they will recognise.
 
-### Then publish it
+Once the app exists, its settings are split across several pages in the
+left-hand menu - **Branding**, **Audience**, **Data access**, **Verification**.
+Two of them need attention.
 
-Your app starts in **Testing** mode. Find the **Publish app** button and
-press it.
+### Branding: the URLs it insists on
+
+Branding asks for an **application home page** and a **privacy policy** link,
+and it will not let you save without them. This stops people who have not
+launched anything yet, because the honest answer is "I don't have a website".
+
+**Use your app's own address for both.** The one Vercel gave you:
+
+```
+https://your-project.vercel.app
+```
+
+That is a real, reachable page that you own, which is all Google is checking
+for. It has to be `https://` and publicly loadable - a Codespace address will
+not do, because it disappears when the Codespace stops.
+
+This is fine for an app used by you and people you know. If you ever open it
+up to strangers, write a real privacy page and point this at it instead.
+Google does not check the content now, but the commitment is real, and any
+app store or payment provider you deal with later will check.
+
+### Data access: leave the scopes alone
+
+Scopes are on their own **Data access** page, not in the setup wizard.
+
+You do not need to add anything there. The kit asks Google for the three
+basic ones - `email`, `profile` and `openid` - every time someone signs in,
+and those need no permission from you in advance.
+
+Adding anything else here - Gmail, Drive, Calendar - puts your app into
+Google's review queue, which takes weeks. If you find yourself being asked to
+justify your use of sensitive data, you have added a scope you did not need.
+Remove it.
+
+### Audience: publish it
+
+Your app starts in **Testing** mode. On the **Audience** page, find
+**Publish app** and press it.
 
 This matters more than it looks:
 
@@ -125,8 +159,16 @@ slash, the wrong port, `.app.github.dev` from a Codespace you have since
 replaced. Read the error page carefully - Google prints the address it was
 given, so compare that against your list rather than guessing.
 
+**It will not save without a privacy policy URL** - use your app's own
+address, `https://your-project.vercel.app`, for both that and the home page.
+See [Branding](#branding-the-urls-it-insists-on) above.
+
+**You cannot find the Scopes setting** - it is on the **Data access** page in
+the left-hand menu, not in the setup wizard. You do not need to change
+anything there.
+
 **"App has not completed the verification process"** - you are still in
-Testing. Go back and publish it.
+Testing. Go back to **Audience** and publish it.
 
 **Signed in fine last week, now it will not** - also Testing. Seven days.
 Publish it.
