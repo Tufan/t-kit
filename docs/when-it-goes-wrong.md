@@ -64,14 +64,52 @@ and refuses anything else.
 **In a Codespace the message names `localhost:3000` even though your browser
 bar says `app.github.dev`.** That is not a clue about where you went wrong:
 GitHub's port forwarding rewrites the address on its way to the app, and the
-kit knows to allow for that. So if you see this in a Codespace, the cause is
-almost always a `BETTER_AUTH_URL` line in `.env.local` - `vercel env pull`
-can leave one behind. Delete that line, then stop `npm run dev` with
+kit knows to allow for that.
+
+So if you see this in a Codespace, look for a `BETTER_AUTH_URL` line in
+`.env.local`. Setup used to write one there (pointing at your live site) so
+that `npm run signin-link` knew your address - it no longer does that in a
+Codespace, but a project set up before that change will still have it, and
+it overrides everything else. Delete the line, then stop `npm run dev` with
 **Ctrl+C** and start it again. `.env.local` is only read when the server
 starts.
 
 On your own machine, the app should already expect `localhost:3000`. If it
 does not, the same `BETTER_AUTH_URL` line is the thing to look for.
+
+---
+
+## Seeing what the app actually receives
+
+Worth knowing for any problem that only happens behind a proxy - a
+Codespace, an ngrok or Cloudflare tunnel - because what the proxy delivers to
+the app is not what your browser sent, and error messages report the
+delivered version. The `Invalid origin` message above is exactly this.
+
+You cannot fetch the forwarded address from inside the Codespace with `curl`
+(the proxy answers 401), so the reliable way is to have the app write down
+one request. Temporarily replace `src/app/api/auth/[...all]/route.ts` with:
+
+```ts
+import { appendFileSync } from 'node:fs'
+import { auth } from '@/lib/auth'
+import { toNextJsHandler } from 'better-auth/next-js'
+
+const handler = toNextJsHandler(auth)
+export const GET = handler.GET
+export async function POST(req: Request) {
+  const h: Record<string, string> = {}
+  req.headers.forEach((v, k) => { h[k] = k === 'cookie' ? '(present)' : v })
+  appendFileSync('/tmp/headers.log', JSON.stringify({ url: req.url, headers: h }) + '\n')
+  return handler.POST(req)
+}
+```
+
+Press **Email me a link** once, then read `/tmp/headers.log`. In a Codespace
+you will see `origin: http://localhost:3000` next to
+`referer: https://<name>-3000.app.github.dev/login` - the rewrite, in the
+flesh. Put the original file back afterwards (`git checkout` the file), or
+ask Claude to.
 
 ---
 
@@ -112,8 +150,8 @@ repositories without being told anything.
 
 ## My app's address doesn't match my project name
 
-You called the project `carpentry`, but the live site is at something like
-`carpentry-4f2b.vercel.app`.
+You called the project `rota`, but the live site is at something like
+`rota-4f2b.vercel.app`.
 
 Nothing is wrong. `.vercel.app` addresses are shared by everyone who uses
 Vercel, so if the plain one was already taken, Vercel keeps your project name

@@ -30,7 +30,7 @@ writing any code.
 
 ## The stack
 
-| | |
+| Part | What it is |
 |---|---|
 | Framework | Next.js 16, App Router |
 | Language | TypeScript |

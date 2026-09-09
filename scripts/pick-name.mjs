@@ -4,14 +4,14 @@
  * Your project ends up in three places, and it is much easier to live with if
  * they all share a name:
  *
- *   github.com/you/carpentry-takeoff     your code
- *   the Vercel project "carpentry-takeoff"
- *   https://carpentry-takeoff.vercel.app  the address you give people
+ *   github.com/you/club-rota       your code
+ *   the Vercel project "club-rota"
+ *   https://club-rota.vercel.app   the address you give people
  *
  * The awkward one is the address. `.vercel.app` names are shared by everyone
- * using Vercel, so an ordinary word like "carpentry" is very likely gone
+ * using Vercel, so an ordinary word like "rota" is very likely gone
  * already - and Vercel does not refuse it, it just quietly gives your project
- * a different address like carpentry-nine.vercel.app. That is how you end up
+ * a different address like rota-nine.vercel.app. That is how you end up
  * with a name you did not choose and cannot remember.
  *
  * The name itself comes from the repository, so the only thing to check is

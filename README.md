@@ -157,29 +157,27 @@ See [picking a name](#picking-a-name).
 Your project ends up in three places, and life is easier if they share a
 name:
 
-| | |
-|---|---|
-| Your code | `github.com/you/carpentry-takeoff` |
-| Your project on Vercel | `carpentry-takeoff` |
-| The address you give people | `carpentry-takeoff.vercel.app` |
+- your code: `github.com/you/club-rota`
+- your project on Vercel: `club-rota`
+- the address you give people: `club-rota.vercel.app`
 
 **All three come from the name you give your repository**, so they stay in
 step on their own. That is also why it is worth a moment's thought: it is the
 only naming decision you make.
 
 **The address is the part that catches people out.** `.vercel.app` names are
-shared by everyone using Vercel, so an ordinary word like `carpentry` is very
+shared by everyone using Vercel, so an ordinary word like `rota` is very
 likely gone. Vercel does not refuse a taken name - it quietly gives your
-project a different address like `carpentry-nine.vercel.app`, which is not
-one you chose and hard to remember.
+project a different address like `rota-nine.vercel.app`, which is not one
+you chose and hard to remember.
 
 Setup checks before it creates anything, and if the address is taken it stops
 and offers to let you rename. That is easy at that point and fiddly later, so
 take the offer.
 
-**So: two or three words, not one.** `carpentry-takeoff` rather than
-`carpentry`. Something specific to you is both likelier to be free and easier
-to say out loud.
+**So: two or three words, not one.** `club-rota` rather than `rota`.
+Something specific to you is both likelier to be free and easier to say out
+loud.
 
 Changed your mind afterwards? Rename the repository on GitHub, then point
 your copy at the new name and run setup again:

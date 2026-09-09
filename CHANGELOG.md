@@ -51,8 +51,32 @@ with the address right, every sign-in was refused. `auth.ts` now trusts that
 address too, but only while `CODESPACE_NAME` is set - it never is on Vercel,
 so nothing is loosened once deployed.
 
+And one more: setup itself wrote `BETTER_AUTH_URL=<your live address>` into
+`.env.local` after the first deploy, so `signin-link` knew where the app
+was. `BETTER_AUTH_URL` overrides everything, so in a Codespace that pinned
+the app to Vercel's address while the browser was on `app.github.dev`. Setup
+no longer writes it in a Codespace; both the app and `signin-link` work the
+address out for themselves there.
+
 **Files.** `src/lib/base-url.ts` (new), `src/lib/auth.ts`, `next.config.ts`,
-`docs/when-it-goes-wrong.md`.
+`scripts/setup.mjs`, `docs/when-it-goes-wrong.md`.
+
+**If your app was set up from 0.1.0 in a Codespace**, the line is already in
+your `.env.local` and the fixes above will not help until it is gone. Delete
+the `BETTER_AUTH_URL` line and restart `npm run dev`.
+
+### The lockfile matches `package.json` again
+
+**What changed.** `package-lock.json` had been generated before `eslint` was
+dropped and `vercel` added, so the first `npm install` after creating a
+project rewrote it - an eleven-thousand-line diff on a new person's very
+first `git status`. Every pinned version is the same before and after;
+nothing actually moved. Regenerated so the diff does not happen.
+
+**Files.** `package-lock.json`.
+
+**Applying it.** Nothing to do - your own first `npm install` already did
+this for you.
 
 **Applying it.** Worth taking if you ever work in a Codespace; harmless
 otherwise, since it resolves to the same address it did before on a laptop or
