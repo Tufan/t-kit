@@ -34,16 +34,23 @@ are on the own-machine path. If not, it is a Codespace.
    gives you a machine but no copy of your own, so there is nowhere to save
    your work and setup will stop and tell you so.
 
-   **Private, unless you have a reason.** It changes nothing about how you
-   work - Codespaces, the database and the free hosting are all the same
-   either way, and the app you put on the internet is public regardless.
-   Private only decides who can read your *code*, and sooner or later a real
-   password ends up in there by accident. You can make it public later in two
-   clicks; unsaying a secret is harder.
+   Three things on that form are worth a moment:
 
-   **On the name**, see [picking a name](#picking-a-name) below. It is worth
-   thirty seconds now because the repository name is the one setup suggests
-   for everything else.
+   **Leave "Include all branches" off.** It is off by default and should stay
+   that way. On, you get every branch of the kit that happened to exist the
+   day you pressed the button - unfinished work in the middle of being
+   written, which is nothing to do with your app and only confusing to find
+   later. You want `main`, which is what off gives you.
+
+   **Set visibility to Private.** It starts on *Public*, so this is one you
+   have to change. It costs you nothing: Codespaces, the database and the
+   free hosting are identical either way, and the app you put on the internet
+   is public regardless. Private only decides who can read your *code* - and
+   sooner or later a real password ends up in there by accident. You can make
+   it public later in two clicks; unsaying a secret is harder.
+
+   **The name** is worth thirty seconds, because it is the one setup suggests
+   for everything else - see [picking a name](#picking-a-name) below.
 3. On your new repository, press **Code**, then **Codespaces**, then
    **Create codespace on main**. Wait a couple of minutes.
 4. When it asks whether you trust the authors, say yes.
