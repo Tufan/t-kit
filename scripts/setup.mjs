@@ -13,6 +13,7 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { randomBytes } from 'node:crypto'
 import { createInterface } from 'node:readline/promises'
 import { productionUrl } from './site-url.mjs'
+import { tidyName, ghReady, ghUser, githubNameFree, vercelAddressFree } from './pick-name.mjs'
 
 // ---------------------------------------------------------------- output
 
@@ -131,26 +132,40 @@ if (!existsSync('.git')) {
   ok('Git history')
 }
 
-// Opening a Codespace directly on the kit - rather than on a copy made with
-// "Use this template" - gives you a working machine attached to a repository
-// you cannot save to. Vercel then tries to link the project to it and fails
-// with "You need admin or write access", which says nothing about the actual
-// cause. Catch it here, before anything is created.
+// Where your work is going to live. Three states matter here:
+//
+//   - pointing at the kit itself: you opened a Codespace straight from it
+//     rather than making your own copy, so you cannot save anything
+//   - pointing at your own repository: nothing to do
+//   - no remote at all: your work only exists on this machine, and nobody
+//     finds out until they look
+//
+// The first is fatal, and Vercel's own error for it ("You need admin or write
+// access") says nothing about the cause, so catch it before anything is made.
 const originUrl = tryRun('git remote get-url origin')
+
 if (originUrl && /[:/]tufan\/t-kit(\.git)?$/i.test(originUrl)) {
   stop(
     'This is the kit itself, not your own copy',
     'Your project is pointing at the original t-kit repository, which you\n' +
     '  cannot save your work to. That happens if you opened a Codespace\n' +
     '  straight from the kit instead of making your own copy of it first.',
-    'Open https://github.com/tufan/t-kit, press "Use this template" and\n' +
-    '  choose "Create a new repository". Then, on your new repository,\n' +
-    '  press "Code" and create a Codespace there, and run `npm run setup`.\n\n' +
-    '  Already part-way through and in a hurry? Run:\n' +
+    'The quickest fix, which keeps everything you have done so far:\n' +
     '    git remote remove origin\n' +
-    '  and setup will work - but your work will only exist on this machine\n' +
-    '  until you give it a repository of your own.'
+    '  then run `npm run setup` again - it will offer to make you a\n' +
+    '  repository of your own.\n\n' +
+    '  Starting from scratch instead? Open https://github.com/tufan/t-kit,\n' +
+    '  press "Use this template" and choose "Create a new repository", then\n' +
+    '  press "Code" on your new repository to make a Codespace there.'
   )
+}
+
+// Offer to create one later, once there is a name to give it.
+const needRepo = !originUrl
+if (needRepo) {
+  info('No repository yet - I will offer to make you one')
+} else {
+  ok(`Saving your work to ${originUrl.replace(/^.*[:/]([^/]+\/[^/]+?)(\.git)?$/, '$1')}`)
 }
 
 // ---------------------------------------------------------------- 2. vercel
@@ -223,17 +238,62 @@ if (existsSync('.vercel/project.json')) {
   }
   ok(`Already linked to "${projectName}"`)
 } else {
+  info('One name is used in three places: your code on GitHub, your project')
+  info('on Vercel, and the address people visit. They are much easier to live')
+  info('with when they match, so we check the name is free everywhere first.')
+  say()
   info('If you already have this project on Vercel, give it the same name')
   info('and this will reconnect to it rather than making a second one.')
   say()
 
   const rl = createInterface({ input: process.stdin, output: process.stdout })
-  const suggested = process.cwd().split(/[\\/]/).pop()
-    .toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').slice(0, 40)
-  const answer = (await rl.question(`  Project name [${suggested}]: `)).trim()
+  let suggested = tidyName(process.cwd().split(/[\\/]/).pop())
+
+  // Keep asking until the name is clear, or until they decide to keep one
+  // that is not. Checking now is cheap; changing it afterwards means a new
+  // repository, a new project and a new address.
+  for (;;) {
+    const answer = (await rl.question(`  Project name [${suggested}]: `)).trim()
+    projectName = tidyName(answer || suggested)
+
+    if (!projectName) {
+      warn('That name has no letters or numbers in it. Try another.')
+      continue
+    }
+
+    info('Checking that name is free...')
+
+    // Only a name they already own is a problem: it would either merge with
+    // an existing project or fail outright.
+    const ghFree = needRepo ? githubNameFree(projectName) : true
+    const addressFree = await vercelAddressFree(projectName)
+
+    const clashes = []
+    if (ghFree === false) clashes.push('you already have a repository called this')
+    if (addressFree === false) clashes.push(`${projectName}.vercel.app is taken by someone else`)
+
+    if (!clashes.length) {
+      ok(`"${projectName}" is free`)
+      break
+    }
+
+    say()
+    for (const clash of clashes) warn(clash)
+    if (addressFree === false) {
+      info('Vercel would still make your project, but give it a different')
+      info(`address - something like ${projectName}-nine.vercel.app, which is`)
+      info('harder to remember and not one you chose.')
+    }
+    say()
+
+    const retry = (await rl.question('  Try a different name? [Y/n]: ')).trim().toLowerCase()
+    if (retry === 'n' || retry === 'no') {
+      warn(`Carrying on with "${projectName}".`)
+      break
+    }
+    suggested = projectName
+  }
   rl.close()
-  projectName = (answer || suggested)
-    .toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').slice(0, 40)
 
   // Links to the project if it already exists, creates it if not - so this
   // is also how a second machine reconnects to a project you already have.
@@ -254,6 +314,32 @@ if (existsSync('.vercel/project.json')) {
     )
   }
   ok(existed ? `Connected to "${projectName}"` : `Created "${projectName}"`)
+}
+
+// Somewhere for the work to live. Outside the block above on purpose: someone
+// who ran setup before this existed already has a Vercel project and no
+// repository, and re-running is how they get offered one.
+if (needRepo) {
+  if (!ghReady()) {
+    warn('Cannot make you a repository here - the `gh` command is not signed')
+    warn('in - so your work will only exist on this machine.')
+    info('Setup will carry on. To fix it afterwards, create an empty')
+    info('repository on github.com and run:')
+    info(`  git remote add origin https://github.com/YOU/${projectName}.git`)
+    info('  git push -u origin main')
+    say()
+  } else {
+    info(`Creating github.com/${ghUser() ?? 'you'}/${projectName}...`)
+    try {
+      run('gh', ['repo', 'create', projectName,
+                 '--private', '--source=.', '--remote=origin', '--push'])
+      ok(`Your work is saved to "${projectName}" on GitHub`)
+    } catch {
+      warn('Could not create the repository - carrying on without one.')
+      warn('Your work will only exist on this machine until you make one.')
+      say()
+    }
+  }
 }
 
 // ---------------------------------------------------------------- 4. db
@@ -414,6 +500,17 @@ say()
 say(`${c.green}${c.bold}  Done. Your app is live.${c.reset}`)
 say()
 say(`  ${c.bold}${url}${c.reset}`)
+
+// Say where all three things ended up. Someone whose repository was never
+// created has no way of noticing on their own until the day they look.
+const finalRemote = tryRun('git remote get-url origin')
+say()
+say(`  ${c.dim}Your code:${c.reset}    ${
+  finalRemote
+    ? finalRemote.replace(/^.*[:/]([^/]+\/[^/]+?)(\.git)?$/, 'github.com/$1')
+    : `${c.yellow}nowhere yet - it only exists on this machine${c.reset}`
+}`)
+say(`  ${c.dim}Your project:${c.reset} vercel.com/dashboard -> ${projectName}`)
 
 // Record it so `npm run signin-link` builds links against the same address.
 // This has to happen after the deploy, because the address does not exist

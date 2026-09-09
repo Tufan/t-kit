@@ -26,6 +26,35 @@ until you give it a repository of your own.
 
 ---
 
+## My code isn't on GitHub
+
+Your app is live, but there is no repository in your GitHub account.
+
+Deploying and saving your code are two different things. Setup puts your app
+on the internet by uploading it to Vercel directly, which does not involve
+GitHub at all. If you never made a repository - or you opened a Codespace
+straight from the kit instead of making your own copy - there is nowhere for
+your work to be saved.
+
+Check what you have:
+
+```bash
+git remote -v
+```
+
+Nothing printed means no repository. In a Codespace, make one:
+
+```bash
+gh repo create my-app --private --source=. --remote=origin --push
+```
+
+Use the same name as your Vercel project, so the two match.
+
+This matters more than it sounds: a Codespace is deleted after 30 days of not
+being used, and anything not pushed goes with it.
+
+---
+
 ## My app's address doesn't match my project name
 
 You called the project `carpentry`, but the live site is at something like

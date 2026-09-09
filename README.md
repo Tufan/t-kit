@@ -124,7 +124,19 @@ paste the error into Claude and ask what it means.
 database, and puts it on the internet. About six minutes. It asks you three
 things: approve a sign-in link for Vercel, name your project, and give the
 email address you will sign in with. It prints the address of your live app
-at the end.
+at the end, along with where your code and your project ended up.
+
+**About the name.** It is used in three places - your code on GitHub, your
+project on Vercel, and the address people visit - so setup checks it is free
+in all of them before going ahead. The one that catches people out is the
+address: `.vercel.app` names are shared by everyone using Vercel, so an
+ordinary word is often gone already. Vercel does not refuse it, it just
+quietly gives your project a different address like `carpentry-nine`. Setup
+tells you and offers you another go, which is much easier than changing it
+afterwards.
+
+If you do not have a repository yet, setup offers to make you one, so your
+work is not left sitting on one machine.
 
 Lost the address? It is on your dashboard at
 [vercel.com](https://vercel.com), under the project name you chose.
@@ -135,9 +147,9 @@ Everything it creates is on your own accounts.
 
 ## Working on two machines
 
-Only if your project is on GitHub, which it is if you started in a Codespace.
-On the own-machine path nothing was pushed anywhere, so ask Claude to put
-your project on GitHub first.
+Only if your project is on GitHub. Setup tells you at the end whether it is -
+look for the "Your code" line. If it says your work only exists on this
+machine, ask Claude to put your project on GitHub first.
 
 Then, on the second machine, ask Claude to fetch your project from GitHub,
 and run:
