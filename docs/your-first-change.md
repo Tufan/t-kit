@@ -8,8 +8,15 @@ Ten minutes, to prove the whole loop works before you build anything real.
 npm run dev
 ```
 
-Open http://localhost:3000. Sign in - the link will appear in the terminal
-window you just ran that command in. Copy it into your browser.
+**In a Codespace:** click the **PORTS** tab next to the terminal, find port
+3000, and click the globe icon. `localhost:3000` will not work - the app is
+running on a machine in a data centre, not on your laptop.
+
+**On your own machine:** open [localhost:3000](http://localhost:3000).
+
+Sign in with your email. `npm run dev` needs to keep running, so open a
+*second* terminal with the **+** at the top right of the terminal panel, run
+`npm run signin-link`, and paste the link it prints into your browser.
 
 ## 2. Look around
 
