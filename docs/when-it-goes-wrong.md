@@ -20,38 +20,50 @@ The fix is to make your own copy: open
 repository. Run `npm run setup` there. You can delete the old Codespace at
 [github.com/codespaces](https://github.com/codespaces).
 
-If you are part-way through and would rather keep going, `git remote remove
-origin` lets setup finish - but your work then only exists on that machine
-until you give it a repository of your own.
+Anything you had already done in the old Codespace can be copied across -
+ask Claude to help if there is any.
 
 ---
 
-## My code isn't on GitHub
+## "This copy is not connected to a repository of your own"
 
-Your app is live, but there is no repository in your GitHub account.
+Setup stopped at the first step, before creating anything.
 
-Deploying and saving your code are two different things. Setup puts your app
-on the internet by uploading it to Vercel directly, which does not involve
-GitHub at all. If you never made a repository - or you opened a Codespace
-straight from the kit instead of making your own copy - there is nowhere for
-your work to be saved.
+Your copy of the kit has no repository behind it, which happens if it arrived
+some way other than the template - downloaded as a zip, say, or copied from
+someone else's folder. Your code would have nowhere to live and your site
+nowhere to deploy from, so setup stops rather than building half a project.
 
-Check what you have:
+The fix is to start from the template: open
+[the kit](https://github.com/tufan/t-kit), press **Use this template** →
+**Create a new repository**, then either open a Codespace on it or clone it
+to your machine.
+
+Already have a repository you want to use? Point your copy at it and run
+setup again:
 
 ```bash
-git remote -v
+git remote add origin https://github.com/YOU/YOUR-REPO.git
+npm run setup
 ```
 
-Nothing printed means no repository. In a Codespace, make one:
+---
+
+## "GitHub is not signed in here"
+
+Setup stopped at the first step. Your computer has the GitHub CLI but has not
+been told who you are, so it could not push your work.
 
 ```bash
-gh repo create my-app --private --source=. --remote=origin --push
+gh auth login
 ```
 
-Use the same name as your Vercel project, so the two match.
+Answer **GitHub.com**, then **HTTPS**, then **Login with a web browser**, and
+paste the code it gives you. Then run `npm run setup` again.
 
-This matters more than it sounds: a Codespace is deleted after 30 days of not
-being used, and anything not pushed goes with it.
+If `gh` itself is not found, install it from
+[cli.github.com](https://cli.github.com) first. In a Codespace it is always
+there and always signed in, so this only comes up on your own machine.
 
 ---
 
@@ -219,9 +231,9 @@ GitHub, so a second machine needs setting up once:
 npm run setup
 ```
 
-**Give it the same project name as before.** It will see the project already
-exists and reconnect, rather than creating a second one. Both machines then
-share the same database and the same live site.
+It takes its name from your repository, so it sees the project already exists
+and reconnects rather than creating a second one. Both machines then share
+the same database and the same live site.
 
 ---
 

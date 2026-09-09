@@ -31,6 +31,41 @@ they should never be restored uninvited.
 
 ## 0.2.0 - 2026-09-09
 
+### One way in, and setup checks everything before it builds anything
+
+**What changed.** There were two ways to start - the template, or `npx degit`
+- and only one of them left you with a repository. The `degit` route made
+setup invent a project name and offer to create a repository, which is where
+people ended up with a live app whose code was saved nowhere.
+
+Now the template is the only documented route, so a repository always exists.
+Setup's first step checks everything it needs - Node, Git, a repository of
+your own, GitHub signed in, Vercel signed in, and whether your `.vercel.app`
+address is free - and stops on any of them rather than warning and carrying
+on. Nothing is created until they all pass, so a failure costs you nothing.
+
+Your project also takes its name from your repository now, instead of asking
+for one separately. Your code, your project and your address stay in step
+without your having to keep them that way.
+
+**Files.** `scripts/setup.mjs`, `README.md`, `docs/when-it-goes-wrong.md`,
+`docs/before-your-session*.md`.
+
+**Applying it.** Nothing to do if your app is already set up - it only
+changes how a *new* app is created, and your project, repository and address
+already exist. Setup stays safe to re-run.
+
+Worth taking if you re-run setup on a second machine, since the version you
+have will ask for a project name that this one derives. Otherwise ignore it.
+
+If you have deleted `docs/`, ignore the documentation half. Do not put it
+back.
+
+**One thing to know either way:** on your own machine, setup now requires the
+GitHub CLI (`gh`) to be installed and signed in, where before it warned and
+carried on. Codespaces already have it. If you re-run setup locally and it
+stops, `gh auth login` is the fix.
+
 ### Google sign-in turns itself on when its credentials are set
 
 **What changed.** Setting up Google sign-in used to take two steps: put the

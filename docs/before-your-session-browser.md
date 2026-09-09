@@ -85,7 +85,8 @@ We will do this together, but so you know what is coming:
    nowhere to save your work.
 2. Wait a minute while it sets itself up.
 3. In the terminal, run `npm run setup`. It will ask you to approve a link
-   for Vercel, name your project, and give the email you will sign in with.
+   for Vercel and give the email you will sign in with. Your project takes
+   its name from the repository you just made.
 4. It prints the address of your live app at the end.
 
 Everything is created on your own accounts, so you own all of it and can
