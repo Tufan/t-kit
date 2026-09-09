@@ -13,6 +13,14 @@ const baseURL = process.env.BETTER_AUTH_URL
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
     : 'http://localhost:3000')
 
+const googleCredentials =
+  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+    ? {
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      }
+    : null
+
 export const auth = betterAuth({
   baseURL,
   database: drizzleAdapter(db, { provider: 'pg', schema }),
@@ -30,11 +38,9 @@ export const auth = betterAuth({
     }),
   ],
 
-  // Google sign-in: see docs/add-ons/google-login.md
-  // socialProviders: {
-  //   google: {
-  //     clientId: process.env.GOOGLE_CLIENT_ID!,
-  //     clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-  //   },
-  // },
+  // Google sign-in turns itself on once GOOGLE_CLIENT_ID and
+  // GOOGLE_CLIENT_SECRET are set, and the login page grows a Google button to
+  // match. Until then this is empty and the emailed link is the only way in.
+  // See docs/add-ons/google-login.md.
+  socialProviders: googleCredentials ? { google: googleCredentials } : {},
 })
