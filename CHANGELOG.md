@@ -29,6 +29,34 @@ they should never be restored uninvited.
 
 ---
 
+## 0.2.1 - 2026-10-01
+
+### `signin-link` no longer calls every fresh link expired
+
+**What changed.** On a computer set to UK time during British Summer Time
+(late March to late October), `npm run signin-link` said "That link has
+expired" even straight after asking for one, so there was no way in until
+the clocks went back. Codespaces and Vercel run on UTC, which is why it only
+showed up on a laptop.
+
+The expiry is stored as a UTC time with no time zone attached, and the
+database driver reads such times back as the computer's local time, which
+puts them an hour early in summer. The script now asks the database how many
+minutes are left, so the computer's clock setting no longer matters. Signing
+in through the app itself was never affected; only this helper script was.
+
+**Files.** `scripts/signin-link.mjs` (the `select` near the bottom, and the
+expiry check and minutes-left lines after it).
+
+**Applying it.** Copy the file across as-is unless the app has changed it.
+If it has, make the same change by hand: select
+`extract(epoch from (expires_at - (now() at time zone 'utc'))) / 60 as mins_left`
+instead of `expires_at`, and use that number for both the "expired" check
+and the "valid for about N minutes" line. Nothing to redeploy: the script
+only runs on your own machine.
+
+---
+
 ## 0.2.0 - 2026-09-09
 
 ### Sign-in works in a Codespace
