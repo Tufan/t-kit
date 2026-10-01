@@ -74,8 +74,12 @@ const site = siteUrl().replace(/\/+$/, '')
 
 // Better Auth stores the token as the row's `identifier`, and the payload
 // (the email it was requested for) as `value`.
+// `expires_at` is a UTC time stored without a time zone, and the driver reads
+// it back as local time - an hour out during British Summer Time, so every
+// fresh link looked expired. Work out the minutes left in the database instead.
 const rows = await sql`
-  select identifier, value, expires_at
+  select identifier, value,
+    extract(epoch from (expires_at - (now() at time zone 'utc'))) / 60 as mins_left
   from verification
   order by created_at desc
   limit 1
@@ -88,7 +92,8 @@ if (!rows.length) {
   process.exit(0)
 }
 
-const { identifier: token, value, expires_at: expiresAt } = rows[0]
+const { identifier: token, value, mins_left } = rows[0]
+const minsLeftRaw = mins_left == null ? null : Number(mins_left)
 
 let email = ''
 try {
@@ -97,15 +102,13 @@ try {
   // value is not JSON in every Better Auth version; the link still works.
 }
 
-if (expiresAt && new Date(expiresAt) < new Date()) {
+if (minsLeftRaw !== null && minsLeftRaw <= 0) {
   console.log('\n  That link has expired.')
   console.log('  Ask for a new one in the browser, then run this again.\n')
   process.exit(0)
 }
 
-const minsLeft = expiresAt
-  ? Math.max(0, Math.round((new Date(expiresAt) - Date.now()) / 60000))
-  : null
+const minsLeft = minsLeftRaw === null ? null : Math.max(0, Math.round(minsLeftRaw))
 
 console.log(`\n  Sign-in link${email ? ` for ${email}` : ''}:\n`)
 console.log(
