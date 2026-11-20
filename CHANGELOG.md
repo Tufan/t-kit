@@ -29,6 +29,32 @@ they should never be restored uninvited.
 
 ---
 
+## 0.2.2 - 2026-11-20
+
+### Google sign-in always asks which account
+
+**What changed.** "Continue with Google" now shows Google's account chooser
+every time. Before, Google quietly reused whichever account had been picked
+last. So someone who picked the wrong account once (a partner's, a work
+account) was stuck with it: every later click went straight back in as that
+account, or straight back to an error if that account had no access, with no
+way to choose another. Found in a real app on 20 Nov 2026.
+
+The cost is one extra click for people with a single Google account, who now
+see the chooser with just their account in it.
+
+**Files.** `src/lib/auth.ts` (the `socialProviders` line at the bottom).
+
+**Applying it.** Only relevant if the app has Google sign-in switched on
+(`GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` set). Make the same change by
+hand rather than copying the file, since apps often change this file: add
+`prompt: 'select_account'` to the Google settings, keeping anything else the
+app has there (for example `disableSignUp`), e.g.
+`google: { ...googleCredentials, prompt: 'select_account' }`. Redeploy for it
+to take effect. Nothing to change in Google's own settings.
+
+---
+
 ## 0.2.1 - 2026-10-01
 
 ### `signin-link` no longer calls every fresh link expired

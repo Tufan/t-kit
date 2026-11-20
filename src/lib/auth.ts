@@ -45,5 +45,10 @@ export const auth = betterAuth({
   // GOOGLE_CLIENT_SECRET are set, and the login page grows a Google button to
   // match. Until then this is empty and the emailed link is the only way in.
   // See docs/add-ons/google-login.md.
-  socialProviders: googleCredentials ? { google: googleCredentials } : {},
+  //
+  // prompt: 'select_account' makes Google ask which account every time.
+  // Without it, Google quietly reuses whichever account was picked last, so
+  // someone who picks the wrong one (a partner's, a work account) can never
+  // get back to the chooser to pick the right one.
+  socialProviders: googleCredentials ? { google: { ...googleCredentials, prompt: 'select_account' } } : {},
 })
